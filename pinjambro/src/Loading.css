@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "quantico" ;
+  src: url('./font/Quantico-Regular.ttf');
+}
+
+.loading-overlay{
+    font-family: 'quantico';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transition: all 0.25s ease-in-out;
+    background-color: rgba(0, 0, 0,0.5 );
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .loading-container{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .loading-container p {
+    position: absolute;
+    bottom: 111px;
+    font-family: 'quanticoB';
+    animation: flickerAnimation 1s infinite;
+  }
+
+  @keyframes flickerAnimation {
+    0%   { opacity:1; }
+    50%  { opacity:0; }
+    100% { opacity:1; }
+  }
+  @-o-keyframes flickerAnimation{
+    0%   { opacity:1; }
+    50%  { opacity:0; }
+    100% { opacity:1; }
+  }
+  @-moz-keyframes flickerAnimation{
+    0%   { opacity:1; }
+    50%  { opacity:0; }
+    100% { opacity:1; }
+  }
+  @-webkit-keyframes flickerAnimation{
+    0%   { opacity:1; }
+    50%  { opacity:0; }
+    100% { opacity:1; }
+  }
+
+  
+  .loading-container svg{
+    stroke-width: 3px;
+    scale: 25%;
+  }
+  

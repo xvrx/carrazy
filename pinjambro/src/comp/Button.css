@@ -1,0 +1,82 @@
+
+
+.login-btn {
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.35rem 1rem;
+  border: 0;
+  transition: all 0.15s;
+  border-radius: 2px;
+  width: fit-content;
+  position: relative;
+  user-select: none;
+  /* min-width: 250px; */
+}
+
+.login-btn:hover {
+  background: #7ddbf8;
+  box-shadow: 0px 6px 15px #00ff8061;
+  padding-right: 2.4rem ;
+  color: #4b4b4b;
+}
+.login-btn:hover > .button-logo {
+    color: rgb(54, 54, 54);
+    opacity: 1;
+}
+
+.login-btn:active {
+    transform: scale(0.95);
+    background: #97aec0 ;
+}
+
+.button-logo {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 80%;
+    top: 54%;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: all 0.25s;
+    transform: translate(-50%, -50%);
+}
+
+.button-logo svg {
+    width: 1000px;
+}
+
+/* ! SOMEWHERE */
+
+.clear-btn {
+  background: #394b64;
+  color: #c2c2c2;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.35rem 1rem;
+  border: 0;
+  transition: all 0.15s;
+  border-radius: 2px;
+  width: fit-content;
+  position: relative;
+  user-select: none;
+  /* min-width: 250px; */
+}
+
+.clear-btn:hover {
+  background: #fc6a6a;
+  box-shadow: 0px 6px 15px #ff898961;
+  padding-right: 2.4rem ;
+  color: #000000;
+}
+.clear-btn:hover > .button-logo {
+    color: rgb(0, 0, 0);
+    opacity: 1;
+}
+
+.clear-btn:active {
+    transform: scale(0.95);
+    background: #97aec0 ;
+}

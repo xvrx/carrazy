@@ -1,0 +1,480 @@
+
+.tunggakan-modal-search{
+    font-size: 1rem;
+    font-family: 'robotBold', sans-serif;
+    display: flex;
+    margin : 22px 22px 22px 0
+}
+
+
+.modal-search-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content;
+    cursor: text;
+    text-align: flex-start;
+}
+
+.modal-search-input{
+    left: 0;
+    font-size: 1rem;
+    font-family: "quantico";
+    color: white;
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 158px;
+}
+
+.search-modal-line{
+    position: absolute;
+    background-color: rgb(224, 103, 103);
+    left: 0;
+    bottom: -2px;
+    width:160px;
+    height: 1px;
+    cursor:text;
+    transition: all 0.15s ease-in-out;
+} 
+
+
+.search-modal-text{
+    font-family: 'quanticoB';
+    font-size: 1rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(194, 194, 194, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-search-input-label {
+    transition: transform 0.25s ease-in-out,
+                background-color 0.25s ease-in-out,
+                padding 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+    
+}
+
+
+
+.modal-search-input:focus ~ #modal-search-input-label,
+.modal-search-input:valid ~ #modal-search-input-label {
+    font-family: 'quantico'; 
+    color: rgb(70, 181, 255);
+    transform: translate(205px,13px) scale(0.8);
+    background-color: #1f263c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.modal-search-input:focus ~ .search-modal-line,
+.modal-search-input:valid ~ .search-modal-line
+{
+    background-color: rgba(33, 150, 243, 1);
+}
+/*! END ===== */
+
+
+
+
+
+
+
+
+
+
+.tunggakan-modal-search-bottom{
+    font-size: 1rem;
+    font-family: 'robotBold', sans-serif;
+    display: flex;
+    margin : 22px 22px 22px 0
+}
+
+
+.modal-search-bottom-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content;
+    cursor: text;
+    text-align: flex-start;
+}
+
+.modal-search-bottom-input{
+    left: 0;
+    font-size: 1rem;
+    font-family: "quantico";
+    color: white;
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 158px;
+}
+
+.search-bottom-modal-line{
+    position: absolute;
+    background-color: rgb(224, 103, 103);
+    left: 0;
+    bottom: -2px;
+    width:160px;
+    height: 1px;
+    cursor:text;
+    transition: all 0.15s ease-in-out;
+} 
+
+
+.search-bottom-modal-text{
+    font-family: 'quanticoB';
+    font-size: 1rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(194, 194, 194, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-search-bottom-input-label {
+    transition: transform 0.25s ease-in-out,
+                background-color 0.25s ease-in-out,
+                padding 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+    
+}
+
+
+
+.modal-search-bottom-input:focus ~ #modal-search-bottom-input-label,
+.modal-search-bottom-input:valid ~ #modal-search-bottom-input-label {
+    font-family: 'quantico'; 
+    color: rgb(70, 181, 255);
+    transform: translate(205px,13px) scale(0.8);
+    background-color: #1f263c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.modal-search-bottom-input:focus ~ .search-bottom-modal-line,
+.modal-search-bottom-input:valid ~ .search-bottom-modal-line
+{
+    background-color: rgba(33, 150, 243, 1);
+}
+
+
+/*! END ===== */
+
+
+
+
+
+
+
+
+
+
+
+
+.tunggakan-modal-nip--peminjam{
+    font-size: 1rem;
+    font-family: 'robotBold', sans-serif;
+    display: flex;
+    margin : 22px 22px 22px 0
+}
+
+
+.modal-nip--peminjam-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content;
+    cursor: text;
+    text-align: flex-start;
+}
+
+.modal-nip--peminjam-input{
+    left: 0;
+    font-size: 1rem;
+    font-family: "quantico";
+    color: white;
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 158px;
+}
+
+.nip--peminjam-modal-line{
+    position: absolute;
+    background-color: rgb(224, 103, 103);
+    left: 0;
+    bottom: -2px;
+    width:160px;
+    height: 1px;
+    cursor:text;
+    transition: all 0.15s ease-in-out;
+} 
+
+
+.nip--peminjam-modal-text{
+    font-family: 'quanticoB';
+    font-size: 1rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(194, 194, 194, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-nip--peminjam-input-label {
+    transition: transform 0.25s ease-in-out,
+                background-color 0.25s ease-in-out,
+                padding 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+    
+}
+
+
+
+.modal-nip--peminjam-input:focus ~ #modal-nip--peminjam-input-label,
+.modal-nip--peminjam-input:valid ~ #modal-nip--peminjam-input-label {
+    font-family: 'quantico';
+    color: rgb(70, 181, 255);
+    transform: translate(-15px,-18px) scale(0.8);
+    background-color: #1f263c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.modal-nip--peminjam-input:focus ~ .nip--peminjam-modal-line,
+.modal-nip--peminjam-input:valid ~ .nip--peminjam-modal-line
+{
+    background-color: rgba(33, 150, 243, 1);
+}
+
+/*! END ===== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tunggakan-modal-input-penumpang{
+    font-size: 1rem;
+    font-family: 'robotBold', sans-serif;
+    display: flex;
+    margin : 22px 22px 22px 0
+}
+
+
+.modal-input-penumpang-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content;
+    cursor: text;
+    text-align: flex-start;
+}
+
+.modal-input-penumpang-input{
+    width: 150px;
+    left: 0;
+    font-size: 1rem;
+    font-family: "quantico";
+    color: white;
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 158px;
+}
+
+.input-penumpang-modal-line{
+    position: absolute;
+    background-color: rgb(224, 103, 103);
+    left: 0;
+    bottom: -2px;
+    width:160px;
+    height: 1px;
+    cursor:text;
+    transition: all 0.15s ease-in-out;
+} 
+
+
+.input-penumpang-modal-text{
+    width: 150px;
+    font-family: 'quanticoB';
+    font-size: 1rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(194, 194, 194, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-input-penumpang-input-label {
+
+    transition: transform 0.25s ease-in-out,
+                background-color 0.25s ease-in-out,
+                padding 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+    
+}
+
+
+
+.modal-input-penumpang-input:focus ~ #modal-input-penumpang-input-label,
+.modal-input-penumpang-input:valid ~ #modal-input-penumpang-input-label {
+    font-family: 'quantico'; 
+    width: 150px;
+    color: rgb(70, 181, 255);
+    transform: translate(-18px,-13px) scale(0.8);
+    background-color: #1f263c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.modal-input-penumpang-input:focus ~ .input-penumpang-modal-line,
+.modal-input-penumpang-input:valid ~ .input-penumpang-modal-line
+{
+    background-color: rgba(33, 150, 243, 1);
+}
+
+/*! END ===== */
+
+
+
+.tunggakan-modal-nomor-st{
+    font-size: 1rem;
+    font-family: 'robotBold', sans-serif;
+    display: flex;
+    margin : 22px 22px 22px 0
+}
+
+
+.modal-nomor-st-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: fit-content;
+    cursor: text;
+    text-align: flex-start;
+}
+
+.modal-nomor-st-input{
+    left: 0;
+    font-size: 1rem;
+    font-family: "quantico";
+    color: white;
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 158px;
+}
+
+.nomor-st-modal-line{
+    position: absolute;
+    background-color: rgb(224, 103, 103);
+    left: 0;
+    bottom: -2px;
+    width:160px;
+    height: 1px;
+    cursor:text;
+    transition: all 0.15s ease-in-out;
+} 
+
+
+.nomor-st-modal-text{
+    font-family: 'quanticoB';
+    font-size: 1rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(194, 194, 194, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-nomor-st-input-label {
+    transition: transform 0.25s ease-in-out,
+                background-color 0.25s ease-in-out,
+                padding 0.25s ease-in-out,
+                color 0.25s ease-in-out,
+    
+}
+
+
+
+.modal-nomor-st-input:focus ~ #modal-nomor-st-input-label,
+.modal-nomor-st-input:valid ~ #modal-nomor-st-input-label {
+    font-family: 'quantico';
+    color: rgb(70, 181, 255);
+    transform: translate(-15px,-20px) scale(0.8);
+    background-color: #1f263c;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.modal-nomor-st-input:focus ~ .nomor-st-modal-line,
+.modal-nomor-st-input:valid ~ .nomor-st-modal-line
+{
+    background-color: rgba(33, 150, 243, 1);
+}
+
+/*! END ===== */

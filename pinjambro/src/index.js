@@ -1,16 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Pages from './Pages';
 import reportWebVitals from './reportWebVitals';
 import { PreloadProvider } from './context/Preload'
+import { ModalProvider } from './context/Modal'
+import { UtilsProvider } from './context/Utils'
+import { APIProvider } from './context/API'
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <PreloadProvider>
-    <App />
-    </PreloadProvider>
+    <UtilsProvider>
+      <PreloadProvider>
+        <ModalProvider>
+          <APIProvider>
+           <Pages />
+          </APIProvider>
+        </ModalProvider>
+      </PreloadProvider>
+    </UtilsProvider>
   </React.StrictMode>
 );
 

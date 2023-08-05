@@ -1,0 +1,430 @@
+.login-outer-container{
+    font-size: 1rem;
+    width: 100%;
+    height: 100vh;
+    /* border: 2px solid green; */
+    color: white;
+    overflow: hidden;
+    background-color: #62768b;
+}
+
+.login-overlay-container{
+    font-family: "quantico";
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-image: linear-gradient(30deg, #171b2c , #15192a);
+    justify-content: center;
+    align-items: center; 
+    /* width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.login-inner-container{
+    display: flex;
+    justify-content: center;
+    min-height: 43em;
+    height: 43em;
+    max-width: 1300px;
+    align-items: flex-start;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.login-docs-container{
+    max-width: 870px;
+    min-width: 506px;
+    height: 100%;
+    position: relative;
+    background-color: #212528;
+    border-radius: 10px 0 0 10px;
+}
+
+.login-docs-inner-wrapper{
+    overflow-y: auto;
+    width: auto;
+    margin-top: 7px;
+    margin-left: 33px;
+    height: 94%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+
+.login-docs-inner-wrapper::-webkit-scrollbar {
+    position: absolute;
+    width: 10px;
+    border-radius: 5px;
+  }
+  
+  .login-docs-inner-wrapper::-webkit-scrollbar-track {
+    background: transparent; 
+    border-radius: 5px;
+  }
+   
+  .login-docs-inner-wrapper::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 5px;
+  }
+  
+  .login-docs-inner-wrapper:hover::-webkit-scrollbar-thumb {
+    background: #6e6e6e; 
+  }
+  
+.login-docs-tags-container{
+    width: 500px;
+    overflow-y: hidden;
+    max-height: 57px;
+    display: flex;
+}
+
+.login-docs-tags-container span {
+    overflow-wrap: keep-all;
+    width: fit-content;
+    height: 10px;
+}
+
+.login-load-more{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 20px;
+}
+
+.login-docs-bottom-overlay{
+    position: absolute;
+    border-radius: 0 0 0 10px;
+    bottom: 1px;
+    width: 100%;
+    background: linear-gradient(360deg, rgb(33, 37, 40), rgba(33, 37, 40, 0));
+    height: 33px;
+    pointer-events: none;
+}
+
+.login-load-more:hover{
+    color: #fdbc2c;
+}
+
+.login-load-more:active{
+    transform: translateY(1px);
+    color: #d39c25;
+}
+
+.login-docs-header{
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+    margin-top: 9px;
+}
+
+.login-news{
+    width: fit-content;
+    margin-top: 29px;
+}
+
+.login-news-container{
+    margin-bottom:45px;
+}
+
+.login-news h2 {
+    font-size: 1.3rem;
+    width: fit-content;
+    color: #e3e3e3;
+    cursor: pointer;
+}
+.login-news h2:hover{
+    color: #fdbc2c;
+}
+
+.login-news p {
+    color: #b0c8e2;
+    width: 569px;
+}
+
+.login-news span {
+    color: #737f8b;
+}
+
+
+
+.login-news h2:active{
+    transform: translateY(1px);
+    color: #dda326;
+}
+
+
+
+
+
+
+
+
+.login-form-container{
+    min-width: clamp(24em, 26em, 30em);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background: linear-gradient(181deg, #1f263c 63%, #202e47);
+    height: 100%;
+    border-radius: 0 10px 10px 0;
+}
+
+.login-form-logo{
+    width: 100%;
+    margin-top: 82px;
+    display: flex;
+    justify-content: center;
+}
+
+.login-form-logo svg{
+    transform: scale(2.5);
+}
+
+
+
+
+
+
+.login-input-container{
+    position: relative;
+    height: 187px;
+    margin-left: 0;
+    display: flex;
+    width: 80%;
+    align-items: center;
+    border-radius: 10px;
+    margin-top: 77px;
+    border: 1px solid #3db5f3;
+}
+
+.login-input-container::after{
+    content: 'Log in';
+    background-color: #1f263c;
+    font-size: 1.5rem;
+    color: rgb(70, 181, 255);
+    justify-content: center;
+    position: absolute;
+    top: -17px;
+    left: 13px;
+    width: 88px;
+    height: 32px;
+    align-items: center;
+    display: flex;
+}
+
+.modal-username-input-container{
+    position: relative;
+    width: -moz-fit-content;
+    margin-left: 12px;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    cursor: text;
+    width: fit-content;
+}
+
+.modal-username-input{
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    left: 0;
+    color: rgb(70, 181, 255);
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 100px;
+}
+
+.username-modal-line{
+    position: absolute;
+    background-color: rgb(70, 181, 255);
+    left: 0;
+    bottom: -2px;
+    width: 103px;
+    height: 1px;
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+} 
+
+.modal-username-input:focus ~ #modal-username-notice,
+.modal-username-input:valid ~ #modal-username-notice { 
+    transform: translateY(25px);
+    opacity: 1;
+    
+}
+
+.modal-username-input:-webkit-autofill,
+.modal-username-input:-webkit-autofill:hover,
+.modal-username-input:-webkit-autofill:focus,
+.modal-username-input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.username-modal-text{
+    font-size: 0.85rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgba(248, 248, 248, 0.5);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-username-input-label{
+    color: rgb(70, 181, 255);
+}
+
+.modal-username-input:focus ~ #modal-username-input-label,
+.modal-username-input:valid ~ #modal-username-input-label { 
+    color: rgba(248, 248, 248, 0.5);
+    transform: translate(-8px,-17px) scale(0.8);
+}
+
+
+/* END */
+
+
+.login-input-key-container{
+    display: flex;
+    margin-top: 22px;
+}
+
+.modal-key-input-container{
+    position: relative;
+    margin-top: 20px;
+    width: -moz-fit-content;
+    margin-left: 12px;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    cursor: text;
+    width: fit-content;
+}
+
+.modal-key-input{
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    left: 0;
+    color:rgb(70, 181, 255);
+    border: none;
+    background: none;
+    outline: none;
+    text-decoration: none;
+    width: 100px;
+}
+
+.modal-key-input:-webkit-autofill,
+.modal-key-input:-webkit-autofill:hover,
+.modal-key-input:-webkit-autofill:focus,
+.modal-key-input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.key-modal-line{
+    position: absolute;
+    background-color: rgb(70, 181, 255);
+    left: 0;
+    bottom: -2px;
+    width: 103px;
+    height: 1px;
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+} 
+
+.modal-key-input:focus ~ #modal-key-notice,
+.modal-key-input:valid ~ #modal-key-notice { 
+    transform: translateY(25px);
+    opacity: 1;
+    
+}
+
+.key-modal-text{
+    font-size: 0.85rem;
+    -webkit-user-select: none;
+    user-select: none;
+    position: absolute;
+    left: 0px;
+    bottom: 3px;
+    color: rgb(70, 181, 255);
+    cursor: text;
+    transition: all 0.15s ease-in-out;
+}
+
+#modal-key-input-label{
+    color: rgb(70, 181, 255);
+}
+
+.modal-key-input:focus ~ #modal-key-input-label,
+.modal-key-input:valid ~ #modal-key-input-label { 
+    color: #9f9f9f;
+    transform: translate(-8px,-17px) scale(0.8);
+}
+/* END */
+
+#login-submit{
+    color: #9f9f9f;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: bold;
+    background: none;
+    outline: none;
+    border: none;
+    user-select: none;
+}
+
+#login-submit:hover {
+    color: #fdbc2c;
+}
+
+#login-submit:active{
+    transform: translateY(2px);
+}
+
+
+
+
+
+.login-button-submit-container{
+    position: absolute;
+    bottom: -9px;
+    width: 111px;
+    right: 27px;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    background-color: #1f283e;
+}
+
+
+.login-error-flyer{
+    display: flex;
+    margin-top: 26px;
+    text-align: start;
+    justify-content: flex-start;
+    width: 297px;
+    color: #b51a1a;
+    opacity: 0;
+    transform: translateY(35px);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.login-error-flyer.active {
+    opacity: 1;
+    transform: translateY(0px);
+}
