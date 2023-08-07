@@ -31,8 +31,8 @@ import axios from 'axios';
 import DisplayContainer from './comp/DisplayContainer';
 
 axios.defaults.withCredentials = true;
+axios.defaults.headers['Access-Control-Allow-Origin'] = `http://${window.location.hostname}:2000`;
 
-   
 
 function App() {
   const { formatDate,checkIfWithin, normalizeDate,currentDate,next30dayz,setcurrentDate, ifSliced,checkIfDateSliced, } = useContext(UtilsContext)
@@ -73,8 +73,8 @@ function App() {
       // console.log('verify in app.js: ', res );
       loader(false);
       if (res?.data?.stat) { 
-        // if auth is true, download necessary data
 
+        // if auth is true, download necessary data
         // set user profile
         axios.get(currentHost+'api/profile', {withCredentials : true})
           .then((res) => {
@@ -100,7 +100,11 @@ function App() {
             setstartFrom(startFrom + res?.data?.history_lt)
           })
           .catch((err) => {
-            console.log(err.response)
+            if(err?.response?.data?.login == false) {
+              window.location.reload()
+            } else {
+              console.log(err.response)
+            }
           })
       } else {
 
@@ -229,15 +233,16 @@ const navigate = useNavigate()
 
 
   function displaybanner() {
-    console.log('should loamore displayed : ', totalRec < historyList.length)
+    // console.log('should loamore displayed : ', totalRec < historyList.length)
+    // console.log('approval: ',approvalList)
+    // console.log('history: ',historyList)
+    // console.log(carModel)
+    console.log(user)
     setconfirmButton(1)
-    console.log(carModel)
-    console.log('approval: ',approvalList)
-    console.log('history: ',historyList)
     setconfirmLogo('info')
     setconfirmTitle('About')
     setconfirmState('')
-    setconfirmContent(<p>web ini dibuat sedemikian rupa untuk ditelaah lebih lanjut sesuai dengan ketentuan yang berlaku. <br/> <br/> kritik dan saran mohon disampaikan ke <a target="new" href='https://wa.me/6285942845262'>wa.me/6285942845262</a></p>)
+    setconfirmContent(<p>ya gitulah... <br/> <br/> kritik dan saran mohon disampaikan ke <a target="new" href='https://wa.me/6285942845262'>wa.me/6285942845262</a></p>)
     setconfirmModal(true)
   }
 
@@ -422,6 +427,11 @@ const navigate = useNavigate()
           .catch((err) => {
             console.log('delete failed')
             console.log(err.response)
+            if(err?.response?.data?.login == false) {
+              window.location.reload()
+            } else {
+              console.log(err.response)
+            }
           })
       }
 
@@ -649,6 +659,44 @@ const navigate = useNavigate()
         setEditStat(false)
         setInputModal(true)
   }
+
+
+  function download_xlsx() {
+    // console.log('download xls file')
+    axios.get(currentHost+`xlsx`, {withCredentials : true, responseType:'blob'})
+      .then(async(response) => {
+        loader(true)
+        // Create a Blob from the response data
+        const blob = await new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        // Create a URL for the Blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element to trigger the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'peminjaman nigga.xlsx';
+
+        // Append the link to the DOM and trigger the download
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up the URL and link
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+        loader(false)
+      })
+      .catch((err) => {
+        console.log(err.response)
+        if(err?.response?.data?.login == false) {
+          window.location.reload()
+        } else {
+          console.log(err.response)
+        }
+        loader(false)
+      })
+  }
+
   const [approvalSearch, setapprovalSearch] = useState('')
   const [approvalSearchContainer, setapprovalSearchContainer] = useState('')
 
@@ -703,7 +751,7 @@ const navigate = useNavigate()
       })
   }
 
-
+  
 
   useEffect(() => {
     updateMainData()
@@ -751,7 +799,7 @@ const navigate = useNavigate()
                           <div className="car-overlay-right"></div>
                         <div className="car-list">
 
-                              <div className="car-prev">
+                             <div className="car-prev">
                                 <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) - 1)].plat}.png`} alt={'car.png'} />
                                 {carModel[carIdx(carStat - 1)].jenis}
                               </div>
@@ -765,7 +813,7 @@ const navigate = useNavigate()
                               <div className="car-next">
                                 <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) + 1)].plat}.png`} alt={'car.png'} />
                                 {carModel[carIdx(carStat + 1)].jenis}
-                              </div>
+                              </div> 
 
                         </div>
                       </div>
@@ -793,17 +841,22 @@ const navigate = useNavigate()
                         </div>
                       </div>
 
-                      <div className="input-modal-slide-button">
+                      {
+                        (user.role === 'admin') || (user.role === 'user' && !editStat ) ? 
+                        <div className="input-modal-slide-button">
                         <div onClick={() => setstatCar(false)} id='input-slide-button'>{'<'}</div>
                         <div onClick={() => setstatCar(true)} id='input-slide-button'>{'>'}</div>
-                      </div>
+                      </div> :
+                      null
+                      }
 
 
                       <div className="input-inner-container">
                           <div className="input-container-1">
                               <div className="input-nomor-nd">
-                              <Inputx type="text" value={ inputContainer.nond } onChange={(e) => NDchange(e.target.value)} title={'Nomor ND'} className='nip--peminjam'/>
+                              <Inputx disabled={(editStat && user.role =='user')} type="text" value={ inputContainer.nond } onChange={(e) => NDchange(e.target.value)} title={'Nomor ND'} className='nip--peminjam'/>
                                 <SingleDatePicker
+                                    
                                     singleCalendar='true'
                                     startDate={inputContainer.tglnd}
                                     onChange={(startDate) => NDdatechange(startDate)}
@@ -812,7 +865,7 @@ const navigate = useNavigate()
                                     dateFormat="D / MM"
                                     monthFormat="MMM YYYY"
                                     startDatePlaceholder="Tanggal"
-                                    disabled={false}
+                                    disabled={(editStat && user.role =='user')}
                                     className="my-own-class-name"
                                     startWeekDay="monday"
                                 />
@@ -820,7 +873,7 @@ const navigate = useNavigate()
 
                             <div className="penumpang-container">
                               <div className={!penumpangflyer ? "flyer-add-penumpang" : "flyer-add-penumpang active"}>+1 alamat tujuan!</div>
-                              <Inputx refer={penumpangFocus} value={penumpangValue} onChange={(e) => setpenumpangValue(e.target.value)} type='text'  title={'+ alamat tujuan'} className='input-penumpang'/>
+                              <Inputx disabled={(editStat && user.role =='user')} refer={penumpangFocus} value={penumpangValue} onChange={(e) => setpenumpangValue(e.target.value)} type='text'  title={'+ alamat tujuan'} className='input-penumpang'/>
                               {/* MdOutlineDone,MdOutlinePersonAddAlt1, MdOutlinePeopleAlt */}
                               <MdAddLocationAlt onClick={addPenumpang} className='add-guys' size={25} /> 
                               <MdOutlineLocationOn onClick={previewPenumpang} className={inputContainer.pengguna.length>0 ? 'list-guys-active' : 'list-guys'} size={25} />
@@ -829,8 +882,9 @@ const navigate = useNavigate()
 
                           <div className="input-container-2">
                             <div className="input-nomor-st">
-                              <Inputx type='text' value={ inputContainer.nost } onChange={(e) => STchange(e.target.value)} title={'Nomor ST'} className='nomor-st'/>
+                              <Inputx disabled={((editStat && user.role =='user'))} type='text' value={ inputContainer.nost } onChange={(e) => STchange(e.target.value)} title={'Nomor ST'} className='nomor-st'/>
                               <SingleDatePicker 
+                                      disabled={(editStat && user.role =='user')}
                                       singleCalendar='true'
                                       startDate={inputContainer.tglst}
                                       onChange={(startDate) => STDatechange(startDate)}
@@ -839,7 +893,6 @@ const navigate = useNavigate()
                                       dateFormat="D / MM"
                                       monthFormat="MMM YYYY"
                                       startDatePlaceholder="Tanggal"
-                                      disabled={false}
                                       className="my-own-class-name"
                                       startWeekDay="monday"
                                   />
@@ -857,7 +910,7 @@ const navigate = useNavigate()
                               monthFormat="MMM YYYY"
                               startDatePlaceholder="Awal"
                               endDatePlaceholder="Akhir"
-                              disabled={false}
+                              disabled={(editStat && user.role =='user')}
                               className="my-own-class-name"
                               startWeekDay="monday"
                             />
@@ -866,26 +919,23 @@ const navigate = useNavigate()
 
                       </div>
                     {
-                      !editStat ? <div className="input-buttons">
-                      <ButtonTwo onClick={cancelAdd} logo={<MdClose />}title='Cancel'/>
-                      <ButtonOne onClick={submitAddNew} logo={<MdOutlineDone />}title='Submit'/> 
-                    </div> : 
+                      !editStat ? 
+                      <div className="input-buttons">
+                        <ButtonTwo onClick={cancelAdd} logo={<MdClose />}title='Cancel'/>
+                        <ButtonOne onClick={submitAddNew} logo={<MdOutlineDone />}title='Submit'/> 
+                      </div> :
+                      editStat && user.role === 'admin' ?
                       <div className="input-buttons">
                       <ButtonTwo onClick={submitReject}  logo={<MdClose />}title='Reject'/>
                       <ButtonOne onClick={submitApprove}  logo={<MdOutlineDone />}title='Approve'/> 
-                    </div>
+                     </div> :
+                     <div style={{color:'#5f9cab', marginTop:'19px'}}>permohonan menunggu persetujuan admin.</div>
                     }
-
                     </div>
                   </div>
                 </div>
               </div>
               : null}
-
-
-
-
-
 
 
 
@@ -903,7 +953,7 @@ const navigate = useNavigate()
                   inputContainer.pengguna.length > 0 ? 
                     inputContainer.pengguna.map((org,idx) => { return (
                       <div key={idx+1} className="penumpang-bar">
-                        <span>{org}</span>
+                        <span>- {org}</span>
                         <span onClick={()=>removePenumpang(idx)} className='delete-penumpang'>x</span>
                       </div>
                     )})
@@ -1079,7 +1129,7 @@ const navigate = useNavigate()
                     <div className='history-title'>
                       <span><MdOutlineHistory size={30} style={{marginRight:'10px'}}/> approval history</span>
                       <div className="history-buttons">
-                        <div className="history-download" >
+                        <div className="history-download" onClick={download_xlsx} >
                            <span><MdOutlineFileDownload size={25} />download</span> 
                         </div>
                         <div className="history-search">

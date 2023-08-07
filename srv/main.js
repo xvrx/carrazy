@@ -9,6 +9,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 // const fs = require("fs");
 const path = require("path");
+const master = require('./models/Master')
 // dotenv.config();
 
 // turn off the annoying shit
@@ -29,7 +30,7 @@ const cron = require('node-cron');
 // Function to be executed every day at 7 AM from Monday to Friday
 const task = () => {
     // Your function logic here
-    console.log('Executing task at 7 AM');
+    console.log('rungkad moment!')
   };
 
 const cronOpt = {
@@ -41,16 +42,41 @@ const cronOpt = {
   cron.schedule('46 18 * * 1-5', task, cronOpt);
 
 
+  // loop through undone record, adjust status with current date
+  async function doLoop () {
+    const masterRecord = await master.find({status: {$not: /done/}})
+    const now = new Date()
+
+    masterRecord.forEach(record => {
+      const {mulai,akhir} = record
+      const ifGoingon = ifSliced(now, {mulai,akhir});
+      const ifApproved = now < mulai;
+      const ifDone = now > akhir
+  
+      // update peminjaman record status
+      if(ifGoingon) {
+          payload.status = "ongoing"
+      } else if(ifApproved) {
+          payload.status = "approved"
+      } else if(ifDone) {
+          payload.status = "done"
+      }
+    });
+
+  }
+
+  doLoop()
 
 
 
 app.use(express.json())
 app.use(
   cors({
-    // origin: "*",
+    // origin: "http://10.29.63.250:3000",
     origin: [
+      // "*"
       "http://localhost:3000",
-      "http://127.0.0.1:3000",
+      "http://10.29.63.250:3000",
     ],
     // origin: "http://10.13.1.63:3000",
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
@@ -114,7 +140,7 @@ app.use(
 //! IMPORT ROUTER
 const main_api = require("./routes/main_api.js");
 const auth = require("./mdw/auth.js");
-// const xlsx = require("./routes/xlsx.js");
+const xlsx = require("./routes/xlsx.js");
 // const cetak = require("./routes/cetak");
 // const downloadXls = require("./routes/xlsx");
 // const masterfile = require("./routes/masterfile.js");
@@ -123,6 +149,7 @@ const auth = require("./mdw/auth.js");
 //USE ROUTER
 app.use("/api", main_api);
 app.use("/auth", auth);
+app.use("/xlsx", xlsx);
 // app.use("/xlsx", xlsx);
 
 

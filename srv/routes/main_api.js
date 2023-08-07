@@ -35,6 +35,7 @@ router.get('/profile', verify, async (req, res) => {
         nama : currentUser.nama,
         nip : currentUser.nip,
         seksi : currentUser.seksi,
+        role: currentUser.role
        },
         currentDate : currentDate
     })
@@ -79,6 +80,7 @@ router.get('/peminjaman', verify, async (req, res) => {
     }
 })
 
+// search history
 router.get('/search/:prompt', verify ,async(req,res) => {
     const {role, user} = req.session
     // console.log(req.query)
@@ -108,8 +110,7 @@ router.get('/search/:prompt', verify ,async(req,res) => {
     }
 
     if (role === 'admin') {
-        
-
+        // query for admin
         const tot = await masterModel.countDocuments(criteria)
         
         const a = await masterModel.find(criteria)
@@ -128,6 +129,8 @@ router.get('/search/:prompt', verify ,async(req,res) => {
         // if user request for history; only query for the user's records
         criteria.nip_pic = user
         // console.log(criteria)
+        const tot = await masterModel.countDocuments(criteria)
+
         const a = await masterModel.find(criteria)
             .sort({ _id: -1 })
             .skip(startpoint)
@@ -137,7 +140,7 @@ router.get('/search/:prompt', verify ,async(req,res) => {
         // console.log('user search: ', typeof a, a)
         // console.log('from start point: ', startPoint)
         if (a !== null) {
-            res.status(200).json({mainQuery:a})
+            res.status(200).json({mainQuery:a, tot:tot})
         } else {
             res.status(200).json({message:'not found'})
         }
@@ -398,8 +401,6 @@ router.patch('/update/:id', verify, async (req, res) => {
 
     // res.status(200).send('oke')
 })
-
-
 
 
 // reject

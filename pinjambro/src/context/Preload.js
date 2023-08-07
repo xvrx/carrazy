@@ -14,7 +14,8 @@ export const PreloadProvider = props => {
         {
             nama : 'Unknown User',
             nip : '000000000',
-            seksi : 'Seksi Unknown'
+            seksi : 'Seksi Unknown',
+            role : ''
         }
         // {
         //     nama : 'Mario dendi kusumo',

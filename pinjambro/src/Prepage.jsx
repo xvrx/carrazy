@@ -10,6 +10,7 @@ import LoadingOverlay from "./LoadingOverlay";
 // axios
 import axios from "axios";
 axios.defaults.withCredentials = true;
+axios.defaults.headers['Access-Control-Allow-Origin'] = `http://${window.location.hostname}:2000`;
 
 
 const App = React.lazy(() => import('./App'));
@@ -22,7 +23,7 @@ const Prepage = () => {
 
     useEffect(() => {
       axios
-        .get(apiVerify, {
+        .get(currentHost+'auth/verify', {
           withCredentials: true,
         })
         .then((resp) => {
