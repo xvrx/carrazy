@@ -10,27 +10,27 @@ const MongoStore = require("connect-mongo");
 // const fs = require("fs");
 const path = require("path");
 const master = require('./models/Master')
-// dotenv.config();
 
+const { ifSliced, normalizeDate, checkIfDateSliced } = require('./util')
+
+// dotenv.config();
 // turn off the annoying shit
 mongoose.set('strictQuery', false);
 
 // middleware for serving static files
 app.use("/cars", express.static(__dirname + '/cars'));
 
-// app.use(
-//   "/static/profile",
-//   express.static(path.join(__dirname, "static/profile"))
-// );
 
-
+// current date
+const now = new Date()
 // init cron
 const cron = require('node-cron');
 
 // Function to be executed every day at 7 AM from Monday to Friday
 const task = () => {
     // Your function logic here
-    console.log('rungkad moment!')
+    console.log('6 AM database update')
+    updateStatus()
   };
 
 const cronOpt = {
@@ -39,33 +39,71 @@ const cronOpt = {
 }
   // Schedule the task using cron syntax (runs every day at 7 AM from Monday to Friday)
   // cron Options to define timeZone
-  cron.schedule('46 18 * * 1-5', task, cronOpt);
+  cron.schedule('00 06 * * 1-5', task, cronOpt);
 
 
   // loop through undone record, adjust status with current date
-  async function doLoop () {
-    const masterRecord = await master.find({status: {$not: /done/}})
-    const now = new Date()
+  async function updateStatus () {
+    // only update for records other than done or rejected
+    let masterRecord = await master.find({ status: { $nin: ['done', 'rejected', 'waiting'] } })
+    
+    // store overtime records
+    let updateDone = [];
 
-    masterRecord.forEach(record => {
-      const {mulai,akhir} = record
+    // loop and adjust tanggal mulai * akhir to record status
+    await masterRecord.forEach(record => {
+      const mulai = new Date(record.mulai)
+      const akhir = new Date(record.akhir)
+
       const ifGoingon = ifSliced(now, {mulai,akhir});
       const ifApproved = now < mulai;
       const ifDone = now > akhir
   
       // update peminjaman record status
       if(ifGoingon) {
-          payload.status = "ongoing"
+          record.status = "ongoing"
       } else if(ifApproved) {
-          payload.status = "approved"
+          record.status = "approved"
       } else if(ifDone) {
-          payload.status = "done"
+          record.status = "done"
+          updateDone.push({id : record._id, plat : record.plat})
       }
     });
+    
+    // bulk update main records
+    masterRecord.forEach(x => {
+      master.findByIdAndUpdate(x._id, x,{new:true} ,(err, newCar) => {
+        if (err) {
+        console.log(`failed to update record : ${x._id}`);
+        } else {
+            console.log('updated main record :', x._id, "status to: ", x?.status)
+    }})
+    })
 
+    // console.log(updateDone)
+    // if status is done
+    // get rid of carModel
+    for (const x of updateDone) {
+      try {
+        const idc = x.id.toString()
+        mod = await CarModel.findOne({plat:x.plat})
+        
+        idx = mod.peminjaman.findIndex(e => e._id === idc)
+        mod.peminjaman.splice(idx, 1)
+        
+        // update car in database
+        await mod.save()
+        console.log(`carmodel.peminjaman removed : ${idc}`)
+      } catch (error) {
+        console.log(`failed to remove car model for: ${x.id.toString()}`,error)
+      }
+    }
+
+    console.log('peminjaman data is updated, please take notice of any error')
   }
 
-  doLoop()
+  
+
 
 
 
@@ -96,12 +134,6 @@ app.use(
     mongoUrl: "mongodb://127.0.0.1:27017/carrazy",
     collection: "sessions",
   });
-
-
-
-
-
-
 
 
 app.use(
@@ -141,6 +173,7 @@ app.use(
 const main_api = require("./routes/main_api.js");
 const auth = require("./mdw/auth.js");
 const xlsx = require("./routes/xlsx.js");
+const CarModel = require('./models/CarModel');
 // const cetak = require("./routes/cetak");
 // const downloadXls = require("./routes/xlsx");
 // const masterfile = require("./routes/masterfile.js");

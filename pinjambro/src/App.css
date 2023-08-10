@@ -25,14 +25,14 @@ html {
 
 .App {
   font-family: "quantico";
-  position: relative;
+  position: fixed;
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-image: linear-gradient(180deg, #131b3f 0%, #15192a 35%, #0c0e14 100%);
+  background-image: linear-gradient(180deg, #131e2d 0%, #15192a 35%, #0c0e14 100%);
 }
 
 
@@ -579,19 +579,49 @@ margin-bottom: 20px;
   }
 
 .main-modal-overlay {
-    font-family: 'quantico';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.568);
-    z-index: 1;
-    display: flex;
-    justify-content: center;
+  position: fixed;
+  font-family: 'quantico';
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  background-color: rgba(0, 0, 0, 0.568);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
   }
+
+  
+.main-modal-overlay::-webkit-scrollbar {
+  position: absolute;
+  right: -50px;
+  width: 10px;
+  border-radius: 0px;
+}
+
+.main-modal-overlay::-webkit-scrollbar-track {
+  background: transparent; 
+  border-radius: 0px;
+  position: absolute;
+  right: -50px;
+}
+ 
+.main-modal-overlay::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+  position: absolute;
+}
+
+.main-modal-overlay:hover::-webkit-scrollbar-thumb {
+  background: #3c4357; 
+  position: absolute;
+  right: -50px;
+}
+
 
 .main-modal-container {
   width: 640px;
   margin-top: 4%;
+  margin-bottom: 5%;
   height: -moz-fit-content;
   height: fit-content;
   background-color: #1f263c;
@@ -860,14 +890,24 @@ margin-bottom: 20px;
 
 #input-slide-button{
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
   font-weight: 400;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 21px;
+  width: 31px;
   color: rgb(66, 239, 245);
-  border: 2px solid rgb(66, 239, 245);
   padding: 5px 20px;
-  margin: 0 5px;
+  margin: 0 2px;
   border-radius: 5px;
   transition: background-color 0.15s ease-in-out;
+}
+
+#input-slide-button > svg {
+  width: 50px;
+  height: auto;
 }
 
 #input-slide-button:hover{
@@ -962,62 +1002,98 @@ margin-bottom: 20px;
   right: -4px;
 }
 
-.flyer-timeline{
-  /* background-color: red; */
-  width: 140px;
-  height: 100%;
-  text-align: center;
-  position: relative;
-  margin-right: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.flyer-timeline::after{
-  content: '';
-  position: absolute;
-  width: 1px;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.829);
-  right: 0px;
-}
-
 .date-displayer{
   font-size:0.75rem ;
   font-family: 'quantico';
   width: 100%;
   height: fit-content;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   /* margin-top: 10px; */
 }
 
 .date-bars-container {
-  width: -moz-fit-content;
-  width: fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr  1fr 1fr 1fr 1fr;
-  gap: 5px;
+  position: relative;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  margin-top: 18px;
+  display: flex;
+  grid-template-rows: auto;
+  gap: 2px;
+}
+
+.date-bars-container .bar.active:first-child::before,
+.date-bars-container .bar:first-child::before{
+  /* position: absolute; */
+  content: url('./comp/doublearrow.svg');
+  position: absolute;
+  color: white;
+  /* width: 12px; */
+  transform: scale(0.75);
+  left: -5px;
+  /* height: 6px; */
+  top: -20px;
 }
 
 .bar {
+  cursor: pointer;
   position: relative;
-  width: 10px;
-  height: 10px;
-  background-color: grey;
+  width: 6px;
+  height: 7px;
+  background-color: #3a4b7f;
+  transition: width 0.10s ease-in-out,
+height 0.10s ease-in-out;
 }
+
+.bar.none {
+  cursor: pointer;
+  position: relative;
+  width: 6px;
+  height: 7px;
+  background-color: #5a7c22;
+  transition: width 0.10s ease-in-out,
+height 0.10s ease-in-out;
+}
+
+.bar.selected {
+  cursor: pointer;
+  position: relative;
+  width: 6px;
+  height: 7px;
+  background-color: #3a4b7f;
+  border: 1.5px solid rgb(67 189 233);
+  transition: width 0.10s ease-in-out,
+height 0.10s ease-in-out;
+}
+
+/* ===================================== */
+
 .bar.active {
   cursor: pointer;
   position: relative;
-  width: 10px;
+  width: 7px;
   height: 10px;
-  background-color: rgb(66, 239, 245);
+  background-color: rgb(67 189 233);
+  transition: width 0.10s ease-in-out,
+              height 0.10s ease-in-out;
+}
+.bar.active:hover {
+  width: 18px;
+  height: 13px;
 }
 
-.on-hover{
+.bar:hover {
+  width: 18px;
+  height: 10px;
+}
+
+/* =============================== */
+
+.on-hover, .on-hover-nonactive{
   position: absolute;
   left: -9px;
   top: -31px;
@@ -1037,8 +1113,14 @@ margin-bottom: 20px;
   opacity: 1;
   pointer-events:all;
 }
+.bar:hover > .on-hover-nonactive{
+  opacity: 1;
+  pointer-events:all;
+}
 
-.on-hover-flyer{
+
+
+.on-hover-flyer, .on-hover-flyer-nonactive{
   white-space: nowrap;
 }
 
@@ -1191,6 +1273,32 @@ margin-bottom: 20px;
 .date-selector {
   width: 256px;
   margin-bottom: 22px;
+}
+
+
+@keyframes showPopup {
+  0% {
+      transform: scale(0.7);
+      opacity: 0
+  }
+
+  100% {
+      transform: scale(1);
+      opacity: 1
+  }
+}
+
+@keyframes hidePopup {
+  0% {
+      transform: scale(1);
+      opacity: 1
+  }
+
+  100% {
+      transform: scale(0.7);
+      opacity: 0;
+      visibility: hidden
+  }
 }
 
 #tanggal-peminjaman{

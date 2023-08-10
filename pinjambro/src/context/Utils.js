@@ -33,7 +33,7 @@ export const UtilsProvider = props => {
           
           // console.log(`checking idx ${i} !`)
           if (ifSliced(tgl,rng)) {
-              return true
+              return [true, somearray[i]._id]
 
           } else if (!ifSliced(tgl,rng) && i !== somearray.length - 1 ) {
               // console.log('continuing...')
@@ -119,7 +119,7 @@ function normalizeDate(x) {
         const hari = a.toLocaleString('id-ID', {weekday: 'long'});
         const locale = [tanggal, bulan, taun].join("-");
         const localstr = `${tanggal} ${bulanStr[bulanidx]} ${taun}`  
-        return [locale, localstr, `${hari}, ${tanggal} ${bulanStr[bulanidx]}`];
+        return [locale, localstr, `${hari}, ${tanggal} ${bulanStr[bulanidx]}`,`${tanggal}/${bulan}`];
       }
 
 

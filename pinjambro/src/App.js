@@ -1,9 +1,11 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { Component, useContext, useEffect, useRef, useState } from 'react';
 import './App.css';
 
 // date picker
 import { RangeDatePicker, SingleDatePicker  } from 'react-google-flight-datepicker';
 import './comp/dateRange.css';
+
+
 
 import LoadingOverlay from './LoadingOverlay';
 import MainLogo from "./MainLogo";
@@ -12,8 +14,9 @@ import MainLogo from "./MainLogo";
 
 
 import {MdBlock,MdErrorOutline,MdAutoAwesome, MdLogout, MdOutlineCloseFullscreen,MdSearch, MdOutlineEmojiPeople, MdRule, MdOutlineHistory,MdOutlineFileDownload 
-  , MdClose,MdOutlineLocalHospital, MdOutlineDone,MdAddLocationAlt, MdOutlineLocationOn } from "react-icons/md";
-// Context
+  , MdClose,MdOutlineLocalHospital, MdOutlineDone,MdAddLocationAlt,MdOutlineEditCalendar,MdFastRewind,MdFastForward, MdOutlineLocationOn } from "react-icons/md";
+
+  // Context
 import {PreloadContext} from './context/Preload';
 import {ModalContext} from './context/Modal';
 import {UtilsContext} from './context/Utils';
@@ -123,6 +126,9 @@ function App() {
    }
  }, [])
  
+ const [tglSTdisplay, settglSTdisplay] = useState(false)
+ const [tglNDdisplay, settglNDdisplay] = useState(false)
+ const [tglRangedisplay, setTglRangedisplay] = useState(false)
 
   function previewRecords(rec) {
     console.log(rec)
@@ -201,6 +207,7 @@ const navigate = useNavigate()
   function STDatechange(x){
     const y = normalizeDate(x)
     setInputContainer({...inputContainer, tglst: y})
+    settglSTdisplay(false)
   }
   function rangeDatechange(x,y){
     const a = normalizeDate(x)
@@ -242,7 +249,7 @@ const navigate = useNavigate()
     setconfirmLogo('info')
     setconfirmTitle('About')
     setconfirmState('')
-    setconfirmContent(<p>ya gitulah... <br/> <br/> kritik dan saran mohon disampaikan ke <a target="new" href='https://wa.me/6285942845262'>wa.me/6285942845262</a></p>)
+    setconfirmContent(<p>...<br/><br/> iya bang ☝️😎 <a target="new" href='https://wa.me/6282334226818'>wa.me/6282334226818</a></p>)
     setconfirmModal(true)
   }
 
@@ -390,8 +397,13 @@ const navigate = useNavigate()
 
 
   function removePenumpang(x) {
-    const y = inputContainer.pengguna.filter((c,idx) => {return x != idx})
-    setInputContainer({...inputContainer, pengguna: y})
+    if (editStat && user.role === 'user') {
+      
+    } else {
+      const y = inputContainer.pengguna.filter((c,idx) => {return x != idx})
+      setInputContainer({...inputContainer, pengguna: y})
+    }
+
   }
 
   function editApproval(data){
@@ -751,6 +763,31 @@ const navigate = useNavigate()
       })
   }
 
+  // function rangeDatechange(x,y){
+  //   const a = normalizeDate(x)
+  //   const b = normalizeDate(y)
+  //   setInputContainer({...inputContainer, mulai: a, akhir:b})
+  // }
+
+  function addtoSelection(x,y) {
+    // y = "bar selected"
+    console.log(y)
+    // console.log(x)
+    console.log(ifSliced(new Date(normalizeDate(x)), [inputContainer.mulai, inputContainer.akhir]))
+    const mulaiFilled = inputContainer.mulai.length > 0
+    const akhirFilled = inputContainer.akhir.length > 0
+    if (!mulaiFilled) {
+      setInputContainer({...inputContainer, mulai: normalizeDate(x)})
+    } else if (mulaiFilled && !akhirFilled) {
+        if (new Date(inputContainer.mulai) > x) {
+          setInputContainer({...inputContainer, akhir: inputContainer.mulai})
+        } else {
+          setInputContainer({...inputContainer, akhir: normalizeDate(x)})
+        }
+    } else if (mulaiFilled && akhirFilled) {
+      setInputContainer({...inputContainer, mulai : normalizeDate(x), akhir: ''})
+    }
+  }
   
 
   useEffect(() => {
@@ -784,7 +821,7 @@ const navigate = useNavigate()
                     </div>}
                   <div className="main-modal-inner">
                     <div className="main-modal-header">
-                      <span className="title">{editStat ? "Ubah Data" : "Tambah Data"} Peminjaman ({
+                      <span className="title">{editStat && user.role === 'admin'? "Ubah Data" : editStat && user.role === 'user' ? "Preview Data" : "Tambah Data"} Peminjaman ({
                       editStat && !resetState ? `NIP ${inputContainer.nip_pic} a.n ${inputContainer.pic}` :
                       !editStat && !resetState ? `NIP ${user?.nip} a.n ${user?.nama}` :
                       !editStat && resetState ? `NIPPLE ${displayerContainer.nip_pic} a.n ${displayerContainer.pic}` : null
@@ -814,38 +851,50 @@ const navigate = useNavigate()
                                 <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) + 1)].plat}.png`} alt={'car.png'} />
                                 {carModel[carIdx(carStat + 1)].jenis}
                               </div> 
-
                         </div>
                       </div>
 
+                     {editStat && user.role === 'user' ? null :
                       <div className="date-displayer">
-                        <div className='flyer-timeline'><span>Timeline Peminjaman <br/> (2 bulan kedepan)</span></div>
-                        <div className="date-bars-container">
-
-                          {next30dayz.map((dateobj,idx) => { 
-                                if (checkIfWithin(dateobj, carModel[carStat].peminjaman)) {
-                                  return (<div key={idx+1} 
-                                    className={"bar active"}>
-                                      <div className="on-hover">
-                                        <div className='on-hover-flyer'>{formatDate(dateobj)[2]}</div>
-                                      </div>
-                                    </div>)
-                                } else {
-                                  return (<div key={idx+1} className='bar'></div>)
-                                }
+                      <div className="date-bars-container">
+                        {next30dayz.map((dateobj,idx) => { 
+                              if (checkIfWithin(dateobj, carModel[carStat].peminjaman)[0]) {
+                                return (
+                                <div key={idx+1} 
+                                  className={"bar active"}>
+                                    {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
+                                    <div className="on-hover">
+                                      <div className='on-hover-flyer'>❌ {formatDate(dateobj)[2]} </div>
+                                    </div>
+                                </div>
+                                )
+                              } else {
+                                return (
+                                <div key={idx+1} className={
+                                  (dateobj.getDay() === 0 || dateobj.getDay() === 6) ? "bar none" : "bar" 
+                                  } onClick={(dateobj.getDay() === 0 || dateobj.getDay() === 6) ? null : (e) => addtoSelection(dateobj,e.target.className)}>
+                                  {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
+                                  <div className="on-hover-nonactive">
+                                      <div className='on-hover-flyer-nonactive'>{formatDate(dateobj)[2]} </div>
+                                    </div>
+                                </div>
+                                )
                               }
-                            )
-                          }
+                            }
+                          )
+                        }
 
-                          {/* <div className="bar"></div> */}
-                        </div>
+                        {/* <div className="bar"></div> */}
                       </div>
+                      <div className='flyer-timeline'><span>Peminjaman (2 bulan kedepan)</span></div>
+                    </div>
+                    }
 
                       {
                         (user.role === 'admin') || (user.role === 'user' && !editStat ) ? 
                         <div className="input-modal-slide-button">
-                        <div onClick={() => setstatCar(false)} id='input-slide-button'>{'<'}</div>
-                        <div onClick={() => setstatCar(true)} id='input-slide-button'>{'>'}</div>
+                        <div onClick={() => setstatCar(false)} id='input-slide-button'>{<MdFastRewind size={20}/>}</div>
+                        <div onClick={() => setstatCar(true)} id='input-slide-button'>{<MdFastForward size={20}/>}</div>
                       </div> :
                       null
                       }
@@ -856,12 +905,11 @@ const navigate = useNavigate()
                               <div className="input-nomor-nd">
                               <Inputx disabled={(editStat && user.role =='user')} type="text" value={ inputContainer.nond } onChange={(e) => NDchange(e.target.value)} title={'Nomor ND'} className='nip--peminjam'/>
                                 <SingleDatePicker
-                                    
                                     singleCalendar='true'
                                     startDate={inputContainer.tglnd}
                                     onChange={(startDate) => NDdatechange(startDate)}
                                     minDate={new Date(new Date(currentDate).setDate(currentDate.getDate() - 7))}
-                                    maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 45))}
+                                    maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 7))}
                                     dateFormat="D / MM"
                                     monthFormat="MMM YYYY"
                                     startDatePlaceholder="Tanggal"
@@ -875,7 +923,7 @@ const navigate = useNavigate()
                               <div className={!penumpangflyer ? "flyer-add-penumpang" : "flyer-add-penumpang active"}>+1 alamat tujuan!</div>
                               <Inputx disabled={(editStat && user.role =='user')} refer={penumpangFocus} value={penumpangValue} onChange={(e) => setpenumpangValue(e.target.value)} type='text'  title={'+ alamat tujuan'} className='input-penumpang'/>
                               {/* MdOutlineDone,MdOutlinePersonAddAlt1, MdOutlinePeopleAlt */}
-                              <MdAddLocationAlt onClick={addPenumpang} className='add-guys' size={25} /> 
+                              {(editStat && user.role =='user') ? null : <MdAddLocationAlt onClick={(editStat && user.role =='user') ? null : addPenumpang} className='add-guys' size={25} /> }
                               <MdOutlineLocationOn onClick={previewPenumpang} className={inputContainer.pengguna.length>0 ? 'list-guys-active' : 'list-guys'} size={25} />
                             </div>
                           </div>
@@ -889,26 +937,28 @@ const navigate = useNavigate()
                                       startDate={inputContainer.tglst}
                                       onChange={(startDate) => STDatechange(startDate)}
                                       minDate={new Date(new Date(currentDate).setDate(currentDate.getDate() - 7))}
-                                      maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 45))}
+                                      maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 7))}
                                       dateFormat="D / MM"
                                       monthFormat="MMM YYYY"
                                       startDatePlaceholder="Tanggal"
                                       className="my-own-class-name"
                                       startWeekDay="monday"
                                   />
+                                  
                             </div>
                             <div className="date-selector">
                               <div id='tanggal-peminjaman'>Tanggal Peminjaman</div>
-
                             <RangeDatePicker
+                              highlightToday="true"
                               startDate={inputContainer.mulai }
                               endDate={inputContainer.akhir }
                               onChange={(startDate, endDate) => rangeDatechange(startDate, endDate)}
-                              minDate={new Date(new Date(currentDate).setDate(currentDate.getDate()))}
+                              minDate={new Date(new Date(currentDate).setDate(currentDate.getDate())) }
                               maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 45))}
+                              disableDate = {(x) => console.log(x)}
                               dateFormat="D / MMM"
                               monthFormat="MMM YYYY"
-                              startDatePlaceholder="Awal"
+                              startDatePlaceholder="Mulai"
                               endDatePlaceholder="Akhir"
                               disabled={(editStat && user.role =='user')}
                               className="my-own-class-name"
@@ -954,7 +1004,7 @@ const navigate = useNavigate()
                     inputContainer.pengguna.map((org,idx) => { return (
                       <div key={idx+1} className="penumpang-bar">
                         <span>- {org}</span>
-                        <span onClick={()=>removePenumpang(idx)} className='delete-penumpang'>x</span>
+                        {(editStat && user.role ==='user') ? null : <span onClick={() => removePenumpang(idx)} className='delete-penumpang'>x</span>}
                       </div>
                     )})
                 : <span >Tidak ada alamat tujuan</span>

@@ -276,19 +276,25 @@
     margin-right: 36px
 }
 
+
+
 .react-google-flight-datepicker .tooltip-text {
     position: absolute;
-    background-color: #4285f4;
+    background-color: #7d0000;
     color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 5px 15px;
-    z-index: 999;
+    z-index: 1999;
     width: 120px;
     max-width: 120px;
     word-break: break-word;
-    visibility: hidden
+    visibility: hidden;
 }
+
+/* #day-tooltip{
+    visibility: visible !important;
+} */
 
 .react-google-flight-datepicker .tooltip-text::before {
     z-index: 1001;
@@ -297,7 +303,8 @@
     content: "";
     margin-left: -6px;
     margin-bottom: -12px;
-    border-top-color: #4285f4;
+    /* border-top-color: #4285f4; */
+    border-top-color: #30fd5c;
     position: absolute;
     bottom: 0;
     left: 50%
@@ -446,14 +453,14 @@
 
 .react-google-flight-datepicker .day.highlight::before {
     content: '';
-    width: 44px;
-    height: 44px;
+    width: 33px;
+    height: 0px;
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 84%;
     transform: translate(-50%, -50%);
-    background-color: #f7ed7ad1;
-    border-radius: 50%
+    border: #1d5afdd1 2px solid;
+    border-radius: 0px;
 }
 
 .react-google-flight-datepicker .day.hovered {
