@@ -1,4 +1,4 @@
-import { Component, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import './App.css';
 
 // date picker
@@ -14,7 +14,7 @@ import MainLogo from "./MainLogo";
 
 
 import {MdBlock,MdErrorOutline,MdAutoAwesome, MdLogout, MdOutlineCloseFullscreen,MdSearch, MdOutlineEmojiPeople, MdRule, MdOutlineHistory,MdOutlineFileDownload 
-  , MdClose,MdOutlineLocalHospital, MdOutlineDone,MdAddLocationAlt,MdOutlineEditCalendar,MdFastRewind,MdFastForward, MdOutlineLocationOn } from "react-icons/md";
+  , MdClose,MdOutlineLocalHospital, MdOutlineDone,MdAddLocationAlt,MdFastRewind,MdFastForward, MdOutlineLocationOn } from "react-icons/md";
 
   // Context
 import {PreloadContext} from './context/Preload';
@@ -28,7 +28,7 @@ import { Inputx } from './comp/Inputx';
 import {ButtonOne, ButtonTwo} from './comp/Button'
 
 // axios
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import DisplayContainer from './comp/DisplayContainer';
@@ -38,10 +38,10 @@ axios.defaults.headers['Access-Control-Allow-Origin'] = `http://${window.locatio
 
 
 function App() {
-  const { formatDate,checkIfWithin, normalizeDate,currentDate,next30dayz,setcurrentDate, ifSliced,checkIfDateSliced, } = useContext(UtilsContext)
+  const { formatDate,checkIfWithin, normalizeDate,currentDate,next30dayz,setcurrentDate,checkIfDateSliced, } = useContext(UtilsContext)
   
   
-  const {loading, setLoading, user, setapprovalList, approvalList, mainData,
+  const {loading, setLoading, user, approvalList, mainData,
     setmainData,historyList, carModel, setuser
     , totalRec, settotalRec,setHistoryList,setcarModel,
     startFrom, setstartFrom,updateMainData
@@ -66,7 +66,7 @@ function App() {
 
   const [resetState, setresetState] = useState(false)
 
-  const { currentHost, apiLogin, apiVerify } = useContext(ApiContext)
+  const { currentHost } = useContext(ApiContext)
 
   // verify current user cookie
  useEffect(() => {
@@ -103,7 +103,7 @@ function App() {
             setstartFrom(startFrom + res?.data?.history_lt)
           })
           .catch((err) => {
-            if(err?.response?.data?.login == false) {
+            if(err?.response?.data?.login=== false) {
               window.location.reload()
             } else {
               console.log(err.response)
@@ -121,14 +121,10 @@ function App() {
 
     });
  
-   return () => {
-     {}
-   }
+  //  return () => {
+  //    {}
+  //  }
  }, [])
- 
- const [tglSTdisplay, settglSTdisplay] = useState(false)
- const [tglNDdisplay, settglNDdisplay] = useState(false)
- const [tglRangedisplay, setTglRangedisplay] = useState(false)
 
   function previewRecords(rec) {
     console.log(rec)
@@ -163,14 +159,14 @@ const navigate = useNavigate()
   function setstatCar(att) {
     const status = carIdxrev(carStat)
     const maxIdx = carModel.length - 1
-    if(att == true) {
-      if (status == maxIdx) {
+    if(att=== true) {
+      if (status=== maxIdx) {
         setcarStat(0)
       } else {
         setcarStat((prev) => prev + 1)
       }
     } else {
-      if (status == 0){
+      if (status=== 0){
         setcarStat(maxIdx)
       } else {
         setcarStat((prev) => prev - 1)
@@ -207,7 +203,6 @@ const navigate = useNavigate()
   function STDatechange(x){
     const y = normalizeDate(x)
     setInputContainer({...inputContainer, tglst: y})
-    settglSTdisplay(false)
   }
   function rangeDatechange(x,y){
     const a = normalizeDate(x)
@@ -400,14 +395,14 @@ const navigate = useNavigate()
     if (editStat && user.role === 'user') {
       
     } else {
-      const y = inputContainer.pengguna.filter((c,idx) => {return x != idx})
+      const y = inputContainer.pengguna.filter((c,idx) => {return x !== idx})
       setInputContainer({...inputContainer, pengguna: y})
     }
 
   }
 
   function editApproval(data){
-    const carIdx = carModel.findIndex((car) => car.plat == data.plat)
+    const carIdx = carModel.findIndex((car) => car.plat=== data.plat)
     setcarStat(carIdx)
     console.log(data)
     setInputContainer(data)
@@ -439,7 +434,7 @@ const navigate = useNavigate()
           .catch((err) => {
             console.log('delete failed')
             console.log(err.response)
-            if(err?.response?.data?.login == false) {
+            if(err?.response?.data?.login=== false) {
               window.location.reload()
             } else {
               console.log(err.response)
@@ -452,7 +447,7 @@ const navigate = useNavigate()
 
       // add car model
       const newCarID = res.data.carId
-      const idx = carModel.findIndex((car) => car._id == newCarID)
+      const idx = carModel.findIndex((car) => car._id=== newCarID)
       const peminjamanList = res.data.newCarModel
       const newCarModel = carModel
       newCarModel[idx].peminjaman = peminjamanList
@@ -526,7 +521,7 @@ const navigate = useNavigate()
       })
       .catch((err) => {
         console.log('loadmore error: ',err.response)
-        if(err?.response?.data?.login == false) {
+        if(err?.response?.data?.login=== false) {
           window.location.reload()
         } else {
           console.log(err.response)
@@ -637,7 +632,7 @@ const navigate = useNavigate()
           setconfirmContent(`gagal tolak permohonan! ${err?.response?.data?.message}`)
           setconfirmModal(true)
         }
-        // if(err?.response?.data?.login == false) {
+        // if(err?.response?.data?.login=== false) {
         //   window.location.reload()
         // } else {
         //   console.log(err.response)
@@ -687,7 +682,7 @@ const navigate = useNavigate()
         // Create a link element to trigger the download
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'peminjaman nigga.xlsx';
+        link.download = 'peminjaman.xlsx';
 
         // Append the link to the DOM and trigger the download
         document.body.appendChild(link);
@@ -700,7 +695,7 @@ const navigate = useNavigate()
       })
       .catch((err) => {
         console.log(err.response)
-        if(err?.response?.data?.login == false) {
+        if(err?.response?.data?.login=== false) {
           window.location.reload()
         } else {
           console.log(err.response)
@@ -755,7 +750,7 @@ const navigate = useNavigate()
       })
       .catch((err) => {
         console.log('loadmore error: ',err.response)
-        if(err?.response?.data?.login == false) {
+        if(err?.response?.data?.login=== false) {
           window.location.reload()
         } else {
           console.log(err.response)
@@ -763,29 +758,58 @@ const navigate = useNavigate()
       })
   }
 
-  // function rangeDatechange(x,y){
-  //   const a = normalizeDate(x)
-  //   const b = normalizeDate(y)
-  //   setInputContainer({...inputContainer, mulai: a, akhir:b})
-  // }
 
-  function addtoSelection(x,y) {
-    // y = "bar selected"
-    console.log(y)
-    // console.log(x)
-    console.log(ifSliced(new Date(normalizeDate(x)), [inputContainer.mulai, inputContainer.akhir]))
+  function addtoSelection(x) {
     const mulaiFilled = inputContainer.mulai.length > 0
     const akhirFilled = inputContainer.akhir.length > 0
     if (!mulaiFilled) {
       setInputContainer({...inputContainer, mulai: normalizeDate(x)})
     } else if (mulaiFilled && !akhirFilled) {
         if (new Date(inputContainer.mulai) > x) {
-          setInputContainer({...inputContainer, akhir: inputContainer.mulai})
+          setInputContainer({...inputContainer, mulai: normalizeDate(x)})
         } else {
           setInputContainer({...inputContainer, akhir: normalizeDate(x)})
         }
     } else if (mulaiFilled && akhirFilled) {
       setInputContainer({...inputContainer, mulai : normalizeDate(x), akhir: ''})
+    }
+  }
+
+  function displayBarContainer(x) {
+    // console.log(x)
+    if (!x) {
+      console.log('record doesnt exist')
+    } else {
+      axios.get(currentHost+`api/queryFor/${x}`,{withCredentials : true})
+        .then((x) => {
+          const data = x.data.queried
+          if (data) {
+            // console.log(data)
+            setconfirmButton(1)
+            setconfirmLogo('info')
+            setconfirmTitle('Info Peminjaman')
+            setconfirmState('')
+            setconfirmContent(<p>Peminjaman oleh {data.pic} ({data.seksi}) mulai hari {formatDate(data.mulai)[2]} s.d {formatDate(data.akhir)[2]} </p>)
+            setconfirmModal(true)
+          } else {
+            console.error("data doesn't exist!")
+            setconfirmButton(1)
+            setconfirmLogo('err')
+            setconfirmTitle('Error')
+            setconfirmState('')
+            setconfirmContent(<p> Tidak terdapat data apapun! </p>)
+            setconfirmModal(true)
+          }
+        })
+        .catch((x) => {
+          console.error("data doesn't exist!")
+          setconfirmButton(1)
+          setconfirmLogo('err')
+          setconfirmTitle('Error')
+          setconfirmState('')
+          setconfirmContent(<p> Tidak terdapat data apapun! </p>)
+          setconfirmModal(true)
+        })
     }
   }
   
@@ -815,7 +839,7 @@ const navigate = useNavigate()
     {inputModal ? 
               <div className="main-modal-overlay">
                 <div className="main-modal-container">
-                  {displayerContainer.status == '' || displayerContainer.status == 'waiting' ? null :  
+                  {displayerContainer.status=== '' || displayerContainer.status=== 'waiting' ? null :  
                       <div className={`modal-status-${displayerContainer.status}`}>
                       {displayerContainer.status}
                     </div>}
@@ -861,6 +885,7 @@ const navigate = useNavigate()
                               if (checkIfWithin(dateobj, carModel[carStat].peminjaman)[0]) {
                                 return (
                                 <div key={idx+1} 
+                                onClick={() => displayBarContainer(checkIfWithin(dateobj, carModel[carStat].peminjaman)[1])}
                                   className={"bar active"}>
                                     {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
                                     <div className="on-hover">
@@ -871,8 +896,8 @@ const navigate = useNavigate()
                               } else {
                                 return (
                                 <div key={idx+1} className={
-                                  (dateobj.getDay() === 0 || dateobj.getDay() === 6) ? "bar none" : "bar" 
-                                  } onClick={(dateobj.getDay() === 0 || dateobj.getDay() === 6) ? null : (e) => addtoSelection(dateobj,e.target.className)}>
+                                  (inputContainer.mulai=== normalizeDate(dateobj)) || (inputContainer.akhir=== normalizeDate(dateobj))? "bar selected" : (dateobj.getDay() === 0 || dateobj.getDay() === 6) ? "bar none" : "bar" 
+                                  } onClick={(dateobj.getDay() === 0 || dateobj.getDay() === 6) ? null : () => addtoSelection(dateobj,idx)}>
                                   {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
                                   <div className="on-hover-nonactive">
                                       <div className='on-hover-flyer-nonactive'>{formatDate(dateobj)[2]} </div>
@@ -903,7 +928,7 @@ const navigate = useNavigate()
                       <div className="input-inner-container">
                           <div className="input-container-1">
                               <div className="input-nomor-nd">
-                              <Inputx disabled={(editStat && user.role =='user')} type="text" value={ inputContainer.nond } onChange={(e) => NDchange(e.target.value)} title={'Nomor ND'} className='nip--peminjam'/>
+                              <Inputx disabled={(editStat && user.role ==='user')} type="text" value={ inputContainer.nond } onChange={(e) => NDchange(e.target.value)} title={'Nomor ND'} className='nip--peminjam'/>
                                 <SingleDatePicker
                                     singleCalendar='true'
                                     startDate={inputContainer.tglnd}
@@ -913,7 +938,7 @@ const navigate = useNavigate()
                                     dateFormat="D / MM"
                                     monthFormat="MMM YYYY"
                                     startDatePlaceholder="Tanggal"
-                                    disabled={(editStat && user.role =='user')}
+                                    disabled={(editStat && user.role ==='user')}
                                     className="my-own-class-name"
                                     startWeekDay="monday"
                                 />
@@ -921,18 +946,18 @@ const navigate = useNavigate()
 
                             <div className="penumpang-container">
                               <div className={!penumpangflyer ? "flyer-add-penumpang" : "flyer-add-penumpang active"}>+1 alamat tujuan!</div>
-                              <Inputx disabled={(editStat && user.role =='user')} refer={penumpangFocus} value={penumpangValue} onChange={(e) => setpenumpangValue(e.target.value)} type='text'  title={'+ alamat tujuan'} className='input-penumpang'/>
+                              <Inputx disabled={(editStat && user.role ==='user')} refer={penumpangFocus} value={penumpangValue} onChange={(e) => setpenumpangValue(e.target.value)} type='text'  title={'+ alamat / tujuan'} className='input-penumpang'/>
                               {/* MdOutlineDone,MdOutlinePersonAddAlt1, MdOutlinePeopleAlt */}
-                              {(editStat && user.role =='user') ? null : <MdAddLocationAlt onClick={(editStat && user.role =='user') ? null : addPenumpang} className='add-guys' size={25} /> }
+                              {(editStat && user.role ==='user') ? null : <MdAddLocationAlt onClick={(editStat && user.role === 'user') ? null : addPenumpang} className='add-guys' size={25} /> }
                               <MdOutlineLocationOn onClick={previewPenumpang} className={inputContainer.pengguna.length>0 ? 'list-guys-active' : 'list-guys'} size={25} />
                             </div>
                           </div>
 
                           <div className="input-container-2">
                             <div className="input-nomor-st">
-                              <Inputx disabled={((editStat && user.role =='user'))} type='text' value={ inputContainer.nost } onChange={(e) => STchange(e.target.value)} title={'Nomor ST'} className='nomor-st'/>
+                              <Inputx disabled={((editStat && user.role ==='user'))} type='text' value={ inputContainer.nost } onChange={(e) => STchange(e.target.value)} title={'Nomor ST'} className='nomor-st'/>
                               <SingleDatePicker 
-                                      disabled={(editStat && user.role =='user')}
+                                      disabled={(editStat && user.role ==='user')}
                                       singleCalendar='true'
                                       startDate={inputContainer.tglst}
                                       onChange={(startDate) => STDatechange(startDate)}
@@ -954,13 +979,13 @@ const navigate = useNavigate()
                               endDate={inputContainer.akhir }
                               onChange={(startDate, endDate) => rangeDatechange(startDate, endDate)}
                               minDate={new Date(new Date(currentDate).setDate(currentDate.getDate())) }
-                              maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 45))}
+                              maxDate={new Date(new Date(currentDate).setDate(currentDate.getDate() + 60))}
                               disableDate = {(x) => console.log(x)}
                               dateFormat="D / MMM"
                               monthFormat="MMM YYYY"
                               startDatePlaceholder="Mulai"
                               endDatePlaceholder="Akhir"
-                              disabled={(editStat && user.role =='user')}
+                              disabled={(editStat && user.role ==='user')}
                               className="my-own-class-name"
                               startWeekDay="monday"
                             />
@@ -1128,17 +1153,18 @@ const navigate = useNavigate()
                       {
                        approvalList.filter(
                         x => {
-                          if (approvalSearchContainer.length > 1 &&
-                            x.jenis.toLowerCase().includes(approvalSearchContainer) ||
-                            x.pic.toLowerCase().includes(approvalSearchContainer) ||
-                            x.status.toLowerCase().includes(approvalSearchContainer) ||
-                            x.nost.toLowerCase().includes(approvalSearchContainer) ||
-                            x.nond.toLowerCase().includes(approvalSearchContainer) ||
-                            x.seksi.toLowerCase().includes(approvalSearchContainer) ||
-                            x.plat.toLowerCase().includes(approvalSearchContainer) ||
-                            x.mulai.toLowerCase().includes(approvalSearchContainer) ||
-                            x.akhir.toLowerCase().includes(approvalSearchContainer)
-                            ) {
+                          if (
+                            approvalSearchContainer.length > 1) {
+                            return x.jenis.toLowerCase().includes(approvalSearchContainer) ||
+                              x.pic.toLowerCase().includes(approvalSearchContainer) ||
+                              x.status.toLowerCase().includes(approvalSearchContainer) ||
+                              x.nost.toLowerCase().includes(approvalSearchContainer) ||
+                              x.nond.toLowerCase().includes(approvalSearchContainer) ||
+                              x.seksi.toLowerCase().includes(approvalSearchContainer) ||
+                              x.plat.toLowerCase().includes(approvalSearchContainer) ||
+                              x.mulai.toLowerCase().includes(approvalSearchContainer) ||
+                              x.akhir.toLowerCase().includes(approvalSearchContainer)
+                          } else {
                             return x
                           }
                         }

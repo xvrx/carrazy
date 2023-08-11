@@ -16,7 +16,7 @@ axios.defaults.headers['Access-Control-Allow-Origin'] = `http://${window.locatio
 const App = React.lazy(() => import('./App'));
 
 const Prepage = () => {
-  const { currentHost, apiLogin, apiVerify } = useContext(ApiContext)
+  const {currentHost} = useContext(ApiContext)
   
     const [loading, setloading] = useState(null);
     const [errstat, seterrstat] = useState(false)
@@ -44,7 +44,7 @@ const Prepage = () => {
             //if 
           }
         });
-    }, []);
+    }, [currentHost]);
   
     if (loading === null) {
       return (

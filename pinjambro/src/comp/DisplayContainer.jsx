@@ -2,12 +2,11 @@ import React,{ useContext } from 'react'
 import { ModalContext } from '../context/Modal'
 import { UtilsContext } from '../context/Utils'
 import { ApiContext } from '../context/API'
-import {MdOutlineCloseFullscreen,MdSearch, MdOutlineEmojiPeople, MdRule, MdOutlineHistory,MdOutlineFileDownload 
-    , MdClose,MdOutlineLocalHospital, MdOutlineDone,MdOutlinePersonAddAlt1, MdOutlinePeopleAlt } from "react-icons/md";
+import {MdOutlineCloseFullscreen,MdOutlineHistory} from "react-icons/md";
 
 const DisplayContainer = ({resetRejected}) => {
 
-    const {mainModal, setMainModal,emptyContainer,
+    const { setMainModal,emptyContainer,
         mainModalTitle, setdisplayerContainer,
         displayerContainer
   } = useContext(ModalContext)
@@ -17,10 +16,10 @@ const DisplayContainer = ({resetRejected}) => {
   return (
     <div className="main-modal-overlay">
             <div className="main-modal-container">
-              {displayerContainer.status == '' || displayerContainer.status == 'waiting' ? null :  
-                  <div onClick={displayerContainer.status =='rejected' ? resetRejected : null} className={`modal-status-${displayerContainer.status}`}>
+              {displayerContainer.status === '' || displayerContainer.status === 'waiting' ? null :  
+                  <div onClick={displayerContainer.status === 'rejected' ? resetRejected : null} className={`modal-status-${displayerContainer.status}`}>
                   {displayerContainer.status} 
-                  {displayerContainer.status == 'rejected' ?  <div className="reset-icon">
+                  {displayerContainer.status === 'rejected' ?  <div className="reset-icon">
                       <MdOutlineHistory size={20} /> <p> (click here to to re-issue approval)</p>
                   </div> : null}
                 </div>}
@@ -43,7 +42,7 @@ const DisplayContainer = ({resetRejected}) => {
                     <div className="main-modal-row-list">
                     {
                      
-                     displayerContainer.pengguna.length == 0 ? "(tidak ada alamat tujuan)" : displayerContainer.pengguna.map((x, i) => i == displayerContainer.pengguna.length - 1 ? `${x}.` : `${x}, ` )
+                     displayerContainer.pengguna.length === 0 ? "(tidak ada alamat tujuan)" : displayerContainer.pengguna.map((x, i) => i === displayerContainer.pengguna.length - 1 ? `${x}.` : `${x}, ` )
            
                       }
                     </div>

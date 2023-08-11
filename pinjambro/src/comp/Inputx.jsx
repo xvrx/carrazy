@@ -37,7 +37,7 @@ export const Inputx = ({title,refer,disabled, readOnly, type, max, className, on
   )
 }
 
-export const Inputa = ({title,maxLength={maxLength}, type="text", className, onChange, value,onBlur, onClick}) => {
+export const Inputa = ({title,maxLength, type="text", className, onChange, value,onBlur, onClick}) => {
   return (
     <div className={`tunggakan-modal-${className}`}>
         <div className={`modal-${className}-input-container`}>

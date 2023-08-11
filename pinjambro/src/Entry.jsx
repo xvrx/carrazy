@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 // icon
 import { BiLogInCircle } from "react-icons/bi";
 import {
-  FaFileDownload,
-  FaAngleDown,
+  // FaFileDownload,
+  // FaAngleDown,
   FaExclamationCircle,
 } from "react-icons/fa";
 
@@ -19,13 +19,13 @@ axios.defaults.withCredentials = true;
 
 function Entry() {
 
-  const { currentHost, apiLogin, apiVerify } = useContext(ApiContext)
+  const { currentHost } = useContext(ApiContext)
 
   const navigate = useNavigate();
   const [loginLoader, setloginLoader] = useState(false);
-  const [news, setNews] = useState([]);
-  const [startFrom, setStartFrom] = useState(0);
-  const [newsLimit, setnewsLimit] = useState(0);
+  // const [news, setNews] = useState([]);
+  // const [startFrom, setStartFrom] = useState(0);
+  // const [newsLimit, setnewsLimit] = useState(0);
 
   
   
@@ -33,7 +33,7 @@ function Entry() {
   useEffect(() => {
     setloginLoader(true); 
     axios
-      .get(apiVerify, { withCredentials: true })
+      .get(currentHost+'auth/verify', { withCredentials: true })
       .then((res) => {
         console.log(res);
         setloginLoader(false);
@@ -79,7 +79,7 @@ function Entry() {
     return () => {
       setloginLoader(false);
     };
-  }, []);
+  }, [currentHost]);
 
 
   //! Get data
@@ -94,62 +94,62 @@ function Entry() {
   //     });
   // }
 
-  function loadMore() {
-    // console.log(startFrom)
-    loader(true);
-    axios
-      .get(
-        currentHost + "bruh",
-        { params: { startingPoint: startFrom } },
-        { withCredentials: false }
-      )
-      .then((newNews) => {
-        console.log(newNews?.data);
-        const updated = parseInt(newNews?.data?.result?.length);
-        setNews(news.concat(newNews?.data?.result));
-        setStartFrom(startFrom + updated);
-        loader(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        loader(false);
-      });
-  }
+  // function loadMore() {
+  //   // console.log(startFrom)
+  //   loader(true);
+  //   axios
+  //     .get(
+  //       currentHost + "bruh",
+  //       { params: { startingPoint: startFrom } },
+  //       { withCredentials: false }
+  //     )
+  //     .then((newNews) => {
+  //       console.log(newNews?.data);
+  //       const updated = parseInt(newNews?.data?.result?.length);
+  //       setNews(news.concat(newNews?.data?.result));
+  //       setStartFrom(startFrom + updated);
+  //       loader(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       loader(false);
+  //     });
+  // }
 
   const [timeOutId, setTimeOutId] = useState(0);
 
-  function downloadDoc(fileName) {
-    loader(true);
-    axios
-      .get(currentHost + `news/${fileName}`, {
-        method: "GET",
-        withCredentials: true,
-        responseType: "blob",
-      })
-      .then((res) => {
-        const someLink = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = someLink;
-        link.setAttribute("download", `${fileName}.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        loader(false);
-      })
-      .catch(async (err) => {
-        const data = err?.response?.data;
-        let responseObj = await data?.text();
-        // console.log(JSON.parse(responseObj).message)
-        setErrormsg("file is not available in the server!");
-        clearTimeout(timeOutId);
-        seterrordisplay(true);
-        let timer = setTimeout(() => {
-          seterrordisplay(false);
-        }, 5000);
-        setTimeOutId(timer);
-        loader(false);
-      });
-  }
+  // function downloadDoc(fileName) {
+  //   loader(true);
+  //   axios
+  //     .get(currentHost + `news/${fileName}`, {
+  //       method: "GET",
+  //       withCredentials: true,
+  //       responseType: "blob",
+  //     })
+  //     .then((res) => {
+  //       const someLink = window.URL.createObjectURL(new Blob([res.data]));
+  //       const link = document.createElement("a");
+  //       link.href = someLink;
+  //       link.setAttribute("download", `${fileName}.pdf`); //or any other extension
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //       loader(false);
+  //     })
+  //     .catch(async (err) => {
+  //       const data = err?.response?.data;
+  //       let responseObj = await data?.text();
+  //       // console.log(JSON.parse(responseObj).message)
+  //       setErrormsg("file is not available in the server!");
+  //       clearTimeout(timeOutId);
+  //       seterrordisplay(true);
+  //       let timer = setTimeout(() => {
+  //         seterrordisplay(false);
+  //       }, 5000);
+  //       setTimeOutId(timer);
+  //       loader(false);
+  //     });
+  // }
 
   const [user, setuser] = useState({
     user: "",
@@ -168,8 +168,6 @@ function Entry() {
       }, 1000);
     }
   }
-
-  const [statusLogin, setstatusLogin] = useState(false);
 
   function gas() {
     if (user.user === "" || user.key === "") {
@@ -225,7 +223,7 @@ function Entry() {
               Update
             </div>
             <div className="login-docs-inner-wrapper">
-              <div className="login-news-container">
+              {/* <div className="login-news-container">
                 {news?.map((doc, index) => {
                   return (
                     <div key={index} className="login-news">
@@ -244,12 +242,12 @@ function Entry() {
                     </div>
                   );
                 })}
-              </div>
-              {newsLimit !== news.length ? (
+              </div> */}
+              {/* {newsLimit !== news.length ? (
                 <div onClick={loadMore} className="login-load-more">
                   <FaAngleDown size={40} /> load more . . .
                 </div>
-              ) : null}
+              ) : null} */}
             </div>
             <div className="login-docs-bottom-overlay"></div>
           </div>

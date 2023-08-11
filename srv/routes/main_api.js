@@ -6,6 +6,8 @@ const carModel = require('../models/CarModel')
 // const { parse } = require('dotenv')
 // const dateUtils = require('../utils/dateUtils')
 const verify = require('../mdw/verify')
+const mongoose = require('mongoose')
+
 
 
 // utils
@@ -16,6 +18,7 @@ const currentDate = new Date()
 
 
 router.get('/', async (req, res) => {
+    
     const attached = req.body
     console.log('attachment: ',attached)
     res.status(200).json({message: 'nigga sonic teenage warhead!'})
@@ -516,5 +519,16 @@ router.get('/loadmore', verify, async (req, res) => {
         })
     }
 })
+
+router.get('/queryFor/:id', verify, async (req, res) => {
+    id = req.params.id
+    const queried = await masterModel.findById(id)
+    if (queried._id) {
+        res.status(200).json({queried:queried})
+    } else {
+        res.status(400).json({message:`can't find id of : ${id}`})
+    }
+})
+
 
 module.exports = router
