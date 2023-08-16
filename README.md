@@ -32,21 +32,21 @@ npm start
 ```
 6. after running the server, collections will be automatically added into the database
 
-![[Pasted image 20230816193243.png]]
+[figure](./images/Pasted%20image%2020230816193243.png)
 
 7. close the command prompt to shut down the server
 
 7. import *carModelExample.json*  to the carModel Collection
 
-![[bruh moment.gif]]
+[figure](./images/bruh moment.gif)
 
-8. add at least one admin or more users into Users collection based on this schema, there are only 2 roles : "admin" and "user"
+8. add at least one admin or more users into Users collection based on the following structure (contains nama,nip,seksi,pws,role), there are only 2 roles : "admin" and "user"
 
-![[Pasted image 20230816194642.png]]
+[figure](./images/Pasted%20image%2020230816194642.png)
 
 9. open `config.js` in the directory project :
 
-![[Pasted image 20230816195218.png]]
+[figure](./images/Pasted%20image%2020230816195218.png)
 
 - `DB URL` = the server in which mongodb runs
 - `CRON SCHEDULE` = the time in which the app update the status of each active records in the database (ongoing / waiting / approved)
@@ -79,9 +79,9 @@ to add new car model :
 1. add new image model for the car (it's recommended that the image width and height and the file size are relatively similar to that of examples.)
 2. in mongodb, into the carModel collection, insert a record for the new model (jenis, plat & peminjaman)
 
-![[Pasted image 20230816201715.png]]
+[figure](./images/Pasted%20image%2020230816201715.png)
 
-## run the server as a service (for windows only)
+## + run the server as a service (for windows only)
 
 after successful local server setup, you can install the process as a service (instead of showing up a terminal, the process run in the background) 
 
@@ -114,14 +114,20 @@ save the file
 ```bash
 node runAsService.js install
 ```
+- this will create a new folder inside your project directory called "daemon", check for any error in carrazy.err.log, if there's no error inside the log, the service is running in the background
+
+
 
 - open run (windows + R), type services.msc or just search for 'services' in windows start menu
 - in services, find for "carrazy" (name of service in step 2)
 - set Startup type to automatic and click start
 
-![[Pasted image 20230816203953.png]]
+[figure](./images/Pasted%20image%2020230816203953.png)
 
-server will no longer show the terminal as it runs in the background. (you can still run the local server in the project folder using `npm start`)
+> server will no longer show the terminal as it runs in the background. 
+> you can still run the local server in the project folder using `npm start`
+
+open your browser and access the server as in step 11
 
 
 
