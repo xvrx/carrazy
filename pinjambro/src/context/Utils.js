@@ -26,20 +26,22 @@ export const UtilsProvider = props => {
     
   
     function checkIfWithin (tgl, somearray) {
-      for (let i = 0; i < somearray.length; i++) {
-          const start = new Date(normalizeDate(new Date(somearray[i].mulai)) )
-          const end = new Date(normalizeDate(new Date(somearray[i].akhir)))
-          const rng = [start,end]
-          
-          // console.log(`checking idx ${i} !`)
-          if (ifSliced(tgl,rng)) {
-              return [true, somearray[i]._id]
-
-          } else if (!ifSliced(tgl,rng) && i !== somearray.length - 1 ) {
-              // console.log('continuing...')
-              continue
-          } return false
-      }
+      // console.log("check if within array: ", somearray.length)
+      if (somearray.length === 0) {
+        return false
+      } else {
+        for (let i = 0; i < somearray.length; i++) {
+            const start = new Date(normalizeDate(new Date(somearray[i]?.mulai)) )
+            const end = new Date(normalizeDate(new Date(somearray[i]?.akhir)))
+            const rng = [start,end]
+            if (ifSliced(tgl,rng)) {
+                return [true, somearray[i]._id]
+            } else if (!ifSliced(tgl,rng) && i !== somearray.length - 1 ) {
+                // console.log('continuing...')
+                continue
+            } return false
+      } }
+  
   }
 
   // thank you chatGPT

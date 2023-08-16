@@ -70,12 +70,11 @@ html {
 
 .outer {
   transform: translateY(30px);
-  margin-bottom: 50px;
-  width: 60em;
+  margin: 0px 25px 50px 25px;
+  width: 78em;
   min-width: 35em;
-  /* height: 100vh; */
+  height: -moz-fit-content;
   height: fit-content;
-  /* border: 2px solid green; */
 }
 
 .header-container {
@@ -388,7 +387,7 @@ margin-bottom: 20px;
   
   .history-header {
     display: grid;
-    grid-template-columns: 0.5fr 4fr 4fr 2fr 2fr;
+    grid-template-columns: 0.5fr 4fr 2fr 4fr 2fr;
     column-gap: 5px;
     text-align: center;
     margin-bottom: 10px;
@@ -419,10 +418,11 @@ margin-bottom: 20px;
   
   .history-data {
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
     display: grid;
     width: calc(100% - 37px);
-    grid-template-columns: 0.5fr 4fr 4fr 2fr 2fr;
+    grid-template-columns: 0.5fr 4fr 2fr 4fr 2fr;
     column-gap: 5px;
     text-align: center;
     margin: 5px 0;
@@ -508,7 +508,7 @@ margin-bottom: 20px;
     overflow: hidden;
     font-family: 'quanticoB';
     min-width: 45px;
-    max-height: 45px;
+    height: 45px;
     margin: 0 20px;
     display: flex;
     border-radius: 10px;
@@ -523,7 +523,7 @@ margin-bottom: 20px;
     font-family: 'quanticoB';
     overflow: hidden;
     min-width: 45px;
-    max-height: 45px;
+    height: 45px;
     margin: 0 20px;
     display: flex;
     border-radius: 10px;
@@ -537,7 +537,7 @@ margin-bottom: 20px;
     color: black;
     font-family: 'quanticoB';
     min-width: 45px;
-    max-height: 45px;
+    height: 45px;
     margin: 0 20px;
     display: flex;
     overflow: hidden;
@@ -552,7 +552,7 @@ margin-bottom: 20px;
     color: black;
     font-family: 'quanticoB';
     min-width: 45px;
-    max-height: 45px;
+    height: 45px;
     margin: 0 20px;
     display: flex;
     overflow: hidden;
@@ -567,7 +567,7 @@ margin-bottom: 20px;
     color: black;
     font-family: 'quanticoB';
     min-width: 45px;
-    max-height: 45px;
+    height: 45px;
     margin: 0 20px;
     display: flex;
     overflow: hidden;

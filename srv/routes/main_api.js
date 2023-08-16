@@ -19,8 +19,8 @@ const currentDate = new Date()
 
 router.get('/', async (req, res) => {
     
-    const attached = req.body
-    console.log('attachment: ',attached)
+    // const attached = req.body
+    // console.log('attachment: ',attached)
     res.status(200).json({message: 'nigga sonic teenage warhead!'})
 })
 
@@ -85,6 +85,7 @@ router.get('/peminjaman', verify, async (req, res) => {
 
 // search history
 router.get('/search/:prompt', verify ,async(req,res) => {
+    console.log(req.session.user, `search for ${req.params.prompt}`)
     const {role, user} = req.session
     // console.log(req.query)
     const { startpoint } = req.query
@@ -154,7 +155,7 @@ router.get('/search/:prompt', verify ,async(req,res) => {
 
 // add new data
 router.post('/peminjaman', verify, async (req, res) => {
-    console.log('add attempt by', req.session.user)
+    console.log(req.session.user, 'add attempt')
 
     const rec = req?.body?.newrec
     // const modelCar = await carModel.find({})
@@ -170,7 +171,7 @@ router.post('/peminjaman', verify, async (req, res) => {
           const y = [new Date(normalizeDate(x.mulai)),  new Date(normalizeDate(x.akhir))] || '';
           if (checkIfDateSliced(rng,y)) {
             overlap = true
-            console.log('date overlapped!')
+            console.log(req.session.user, 'intended date overlapped!')
             break
             
           } else {
@@ -223,14 +224,14 @@ router.post('/peminjaman', verify, async (req, res) => {
                   }
                 });
               } catch (error) {
-                console.log(error);
+                console.log(req.session.user, error);
                 res
                   .status(500)
                   .json({ message: "failed to update data, server unreachable!" });
               }
 
         } catch (error) {
-            console.log(error)
+            console.log(req.session.user, error)
             res.status(400).send(error)
         }
     } else {
@@ -258,7 +259,7 @@ router.patch('/update/:id', verify, async (req, res) => {
     //  authority ?
     if (role !== 'admin') return res.status(400).json({message:'you are an unauthorized scum!'})
     
-    console.log('approve attempt by', user)
+    console.log(req.session.user, `approving ${req.params.id}`)
 
     const ifGoingon = ifSliced(now, {mulai,akhir});
     const ifApproved = now < mulai;
@@ -275,75 +276,85 @@ router.patch('/update/:id', verify, async (req, res) => {
 
 
     // check if previous and current car model are the same
+
+    // if car model is modified
     if (carmod.plat !== prevCar.plat) {
-        
+        // console.log('car is modified...')
         // before adding new records to new car model, make sure time is not overlap to any existing rec in car model
         const rng = [new Date(normalizeDate(payload.mulai)), new Date(normalizeDate(payload.akhir))]
         let overlap = false
 
         for (let i = 0; i < carmod.peminjaman.length; i++) {
-        const x = carmod.peminjaman[i]
-        
-        const y = [new Date(normalizeDate(x.mulai)),  new Date(normalizeDate(x.akhir))] || '';
-        if (checkIfDateSliced(rng,y)) {
-            overlap = true
-            console.log('date overlapped!')
-            break
-        } else {
-            continue
+            const x = carmod.peminjaman[i]
+            
+            const y = [new Date(normalizeDate(x.mulai)),  new Date(normalizeDate(x.akhir))] || '';
+            if (checkIfDateSliced(rng,y)) {
+                overlap = true
+                console.log('date overlapped!')
+                break
+            } else {
+                continue
         }};
 
-        // replace user nip
-        payload.nip_pic = req.session.user
+        // replace user nip ?
+        // payload.nip_pic = req.session.user
 
         if (overlap) {
             res.status(400).send('start/end date is overlap with an existing record!')
         } else {
+            // console.log('no overlap found, continuing process..')
             // delete old car model record
             const prevModel =  await carModel.findOne({plat : prevCar.plat});
             const prevIdx = prevModel.peminjaman.findIndex(edx => edx._id === id)
             prevModel.peminjaman.splice(prevIdx, 1)
             carModel.findByIdAndUpdate(prevModel._id,  { peminjaman : prevModel.peminjaman },{new:true} ,(err, newCar) => {
                 if (err) {
+                    console.log(req.session.user, err)
                 res.status(500).json({ message: `failed to delete old car model : ${err}`  });
                 } else {
-                    console.log('deleted old car model.', newCar)
+                    // console.log(
+                    //     'deleted old car model in',
+                    //     newCar.jenis
+                    //     )
+
+                    // update main data and car model
+                    // console.log('proceeding to update main data')
+                    masterModel.findByIdAndUpdate(id, payload, { new: true })
+                    .then((x,y) => {
+                        
+                        // add new rec in newcar Model
+                        const peminjamanRecord = {
+                            _id : id,
+                            mulai : payload.mulai,
+                            akhir : payload.akhir
+                        }
+                        // push new carmodel record
+                        carmod.peminjaman.push(peminjamanRecord)
+
+                        carModel.findByIdAndUpdate(carmod._id,  {peminjaman : carmod.peminjaman }, { new: true }, (err, newCar) => {
+                                if (err) {
+                                res.status(500).json({ message: "car model failed to update! (modified on approval)" });
+                                } else {
+                                res.status(200).json({
+                                message:'Car record is succesfully updated! (modified car model upon approval)',
+                                    peminjaman : x,
+                                    carId : carmod._id,
+                                    carModel_peminjaman : newCar
+                            })
+                        }})
+                    })
+                    .catch((err) => {
+                        (req.session.user,err)
+                        res.status.send('failed updating mastermodel')
+                    })
             }})
 
-             // update main data and car model
-            masterModel.findByIdAndUpdate(id, payload, { new: true })
-            .then((x,y) => {
-                
-                // add new rec in newcar Model
-                const peminjamanRecord = {
-                    _id : id,
-                    mulai : payload.mulai,
-                    akhir : payload.akhir
-                }
-                // push new carmodel record
-                carmod.peminjaman.push(peminjamanRecord)
-
-                carModel.findByIdAndUpdate(carmod._id,  {peminjaman : carmod.peminjaman }, { new: true }, (err, newCar) => {
-                        if (err) {
-                        res.status(500).json({ message: "car model failed to update! (modified on approval)" });
-                        } else {
-
-                        res.status(200).json({
-                        message:'Car record is succesfully updated! (modified car model upon approval)',
-                            peminjaman : x,
-                            carId : carmod._id,
-                            carModel_peminjaman : newCar
-                    })
-                }})
-            })
-            .catch((err) => {
-                console.log('err: ',err)
-                res.status.send('failed updating mastermodel')
-            })
+           
         }
         
     // if unmodified
     } else {
+        // console.log('car is unmodified...')
         let carIdx;
         // update car modoel mulai & akhir in carmod
         carIdx = carmod.peminjaman.findIndex((x) => x._id === payload._id)
@@ -377,7 +388,7 @@ router.patch('/update/:id', verify, async (req, res) => {
                         // update car Model
                         carModel.findByIdAndUpdate(carmod._id,  {peminjaman : carmod.peminjaman }, { new: true }, (err, newCar) => {
                             if (err) {
-                            res.status(500).json({ message: "car model failed to update!" });
+                            res.status(500).json({ message: "car model failed to update!", error: err });
                             } else {
                     
                             res.status(200).json({
@@ -390,11 +401,11 @@ router.patch('/update/:id', verify, async (req, res) => {
                         }})
                     })
                     .catch((err) => {
-                        console.log('err: ',err)
+                        console.log(req.session.user, err)
                         res.status.send('failed updating mastermodel')
                     })
             } catch (error) {
-                console.log(error);
+                console.log(req.session.user, error)
                 res.status(500).json({ message: "failed to update data in DB!" });
             }
         } else {
@@ -408,11 +419,11 @@ router.patch('/update/:id', verify, async (req, res) => {
 
 // reject
 router.patch('/reject/:id', verify, async (req, res) => {
+    console.log(req.session.user, `rejecting ${req.params.id}`)
     const id = req.params.id
     const {user, role} = req.session
 
     // console.log(id, user, role)
-
     const payload = await masterModel.findById(id)
     const carmod = await carModel.findOne({plat : payload.plat})
 
@@ -458,22 +469,23 @@ router.patch('/reject/:id', verify, async (req, res) => {
 
 // delete
 router.delete('/del/:id', verify, async (req, res) => {
+    console.log(req.session.user, `deleting ${req.params.id}`)
     const id = req.params.id
     const {user, role} = req.session
 
     const payload = await masterModel.findById(id)
 
     if (
-        (user === payload.pic) || (role === 'admin')
+        (user === payload.nip_pic) || (role === 'admin')
     ) {
         masterModel.findByIdAndDelete(id, function (err, docs) {
             if (err){
-                console.log(err)
+                console.log(req.session.user, err)
                 res.status(500).json({message:err})
             }
             else{
-                console.log("Deleted : ", docs._id);
-                res.status(200).json({message: 'got rid of the old one!'})
+                // console.log("Deleted : ", docs._id);
+                res.status(200).json({message: `got rid of : ${id}!`})
             }
         });
     } else {
@@ -482,6 +494,53 @@ router.delete('/del/:id', verify, async (req, res) => {
   
 
 })
+
+// set as done
+router.patch('/done/:id', verify, async (req, res) => {
+    console.log(req.session.user, `set as done : ${req.params.id}`)
+    const id = req.params.id
+    const {user, role} = req.session
+    // console.log("id: ", id)
+    // console.log("user: ", role)
+    const payload = await masterModel.findById(id)
+    const carmod = await carModel.findOne({plat : payload.plat})
+
+    if (role === 'admin' && (payload.status === 'approved' || payload.status === 'ongoing')) {
+        masterModel.findByIdAndUpdate(id,  {status : 'done' }, { new: true }, (err, peminjaman_new) => {
+            if (err) {
+              res.status(500).json({ message: "main model failed to update!" });
+            } else {
+                // find peminjaman index in carmodel
+                   const caridx = carmod.peminjaman.findIndex(idc => idc._id === id)
+                // get rid of rejected index from car model
+                   carmod.peminjaman.splice(caridx,1)
+
+                // update car model
+                // if idx is found > get rid of it
+                  if (caridx !== -1) {
+                    carModel.findByIdAndUpdate(carmod._id,  {peminjaman : carmod.peminjaman }, { new: true }, (err, newCar) => {
+                        if (err) {
+                          res.status(500).json({ message: "car model failed to update to 'done'" });
+                        } else {
+                            res.status(200).json({
+                            message:'Car record is succesfully set as done!',
+                                peminjaman : peminjaman_new,
+                                carId : carmod._id,
+                                carModel_peminjaman : newCar
+                            })
+                            }
+                        })
+                  } else {
+                    res.status(200).json({message:'record is not found in car model, updated main data whatsoever!'})  
+                  }
+            }})
+        // res.status(200).send('ok')  
+    } else {
+        res.status(400).send({message:'cannot update as done, youre either an unauthorized scum', altMessage: "you're trying to update neither approved/ongoing record"})
+    }
+
+})
+
 
 // load more history
 router.get('/loadmore', verify, async (req, res) => {

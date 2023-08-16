@@ -76,7 +76,6 @@ function App() {
       // console.log('verify in app.js: ', res );
       loader(false);
       if (res?.data?.stat) { 
-
         // if auth is true, download necessary data
         // set user profile
         axios.get(currentHost+'api/profile', {withCredentials : true})
@@ -96,11 +95,21 @@ function App() {
             const some = res?.data?.mainData
             const mod = res?.data?.carMod
             // console.log('mod: ', mod)
-            some && setmainData(some)
-            mod && setcarModel(mod)
-            settotalRec(res?.data?.tot)
-            // console.log(res?.data?.history_lt)
-            setstartFrom(startFrom + res?.data?.history_lt)
+            if (mod.length < 1) {
+              // if car model doesn't exist
+              setconfirmButton(1)
+              setconfirmLogo('err')
+              setconfirmTitle('Data kendaraan tidak ada!')
+              setconfirmContent("pastikan data model kendaraan sudah tersimpan di database.")
+              setconfirmModal(true)
+            } else {
+              // if car model does exist
+              some && setmainData(some)
+              mod && setcarModel(mod)
+              settotalRec(res?.data?.tot)
+              // console.log(res?.data?.history_lt)
+              setstartFrom(startFrom + res?.data?.history_lt)
+            }
           })
           .catch((err) => {
             if(err?.response?.data?.login=== false) {
@@ -211,26 +220,34 @@ const navigate = useNavigate()
   }
 
   function displayNewInput() {
-    // console.log('add new input')
-    setInputContainer(
-      {
-        jenis : carModel[carStat].jenis,
-        nost : '',
-        tglst : '',
-        pengguna : [],
-        mulai : '',
-        akhir : '',
-        nond: '',
-        tglnd: '',
-        plat: carModel[carStat].plat, 
-        pic: user?.nama || '', 
-        nip_pic: user?.nip || '',
-        seksi:user?.seksi || '',
-        status:'waiting' }
-      )
+    if (carModel.length > 0) {
+      setInputContainer(
+        {
+          jenis : carModel[carStat].jenis,
+          nost : '',
+          tglst : '',
+          pengguna : [],
+          mulai : '',
+          akhir : '',
+          nond: '',
+          tglnd: '',
+          plat: carModel[carStat].plat, 
+          pic: user?.nama || '', 
+          nip_pic: user?.nip || '',
+          seksi:user?.seksi || '',
+          status:'waiting' }
+        )
+  
+      setEditStat(false)
+      setInputModal(true)
 
-    setEditStat(false)
-    setInputModal(true)
+    } else {
+      setconfirmButton(1)
+      setconfirmLogo('err')
+      setconfirmTitle('Data kendaraan tidak ada!')
+      setconfirmContent("pastikan data model kendaraan sudah tersimpan di database.")
+      setconfirmModal(true)
+    }
   }
 
 
@@ -238,7 +255,7 @@ const navigate = useNavigate()
     // console.log('should loamore displayed : ', totalRec < historyList.length)
     // console.log('approval: ',approvalList)
     // console.log('history: ',historyList)
-    // console.log(carModel)
+    console.log(carModel)
     console.log(user)
     setconfirmButton(1)
     setconfirmLogo('info')
@@ -269,6 +286,16 @@ const navigate = useNavigate()
         window.location.reload()
       })
   }
+
+  function waitForTrue(varee, executeFunction) {
+    if (!varee) {
+        setTimeout(function () {
+            waitForTrue(varee, executeFunction);
+        }, 3000); // Wait for 3 seconds
+    } else {
+        executeFunction();
+    }
+}
 
   function closeModal () {
     // console.log('close modal!')
@@ -363,11 +390,6 @@ const navigate = useNavigate()
     }
   }
 
-  function submitEdit() {
-    setconfirmState('update')
-    console.log(inputContainer)
-  }
-
   function cancelAdd() {
     closeModal()
   }
@@ -411,100 +433,94 @@ const navigate = useNavigate()
   }
 
   // confirm add new records
-  function confirmAddNew() {
+  async function confirmAddNew() {
   loader(true)
-
     axios.post(currentHost+'api/peminjaman', { newrec : inputContainer } ,  {withCredentials : true})
-    .then((res) => {
-      console.log('data: post peminjaman',res.data)
-      // const some = res?.data?.mainData
-      // some && setmainData(some)
-      // settotalRec(res?.data?.tot)
-      if (resetState) {
-        // if this is a reset request, delete previously rejected record
-        console.log('reset state is true, deleting the previous record')
-        axios.delete(currentHost+`api/del/${displayerContainer._id}`, {withCredentials : true})
-          .then((res) => {
-            console.log('delete resolved')
-            const tobeDeleted = mainData.findIndex(del => del._id === displayerContainer._id)
-            console.log(displayerContainer._id)
-            const main = mainData
-            main.splice(tobeDeleted, 1)
-          })
-          .catch((err) => {
-            console.log('delete failed')
-            console.log(err.response)
-            if(err?.response?.data?.login=== false) {
-              window.location.reload()
-            } else {
-              console.log(err.response)
-            }
-          })
-      }
+      .then((res) => {
+        const peminjamanList = res.data.newCarModel
+        const newCarID = res.data.carId
+        const newRecord = res.data.peminjaman
+        const newRecID = newRecord._id
+        // const some = res?.data?.mainData
+        // some && setmainData(some)
+        // settotalRec(res?.data?.tot)
+        if (resetState) {
+              let mainRecords = mainData
+              // if this is a reset request, delete previously rejected record
+              console.log('reset state is true, deleting the previous record')
+              axios.delete(currentHost+`api/del/${displayerContainer._id}`, {withCredentials : true})
+                .then(async(res) => {
+                  console.log('delete resolved', res)
+                  const tobeDeleted = mainRecords.findIndex(del => del._id === displayerContainer._id)
+                  // console.log(displayerContainer._id)
+                  // const main = mainData
+                  await mainRecords.splice(tobeDeleted, 1)
+                  console.log("deleted from main records: ", displayerContainer._id)
+                  console.log("main records after deletion:", mainRecords.length)
+                  settotalRec((prev) => parseInt(prev)-1)
+                  // add car model
+                  const idx = carModel.findIndex((car) => car._id=== newCarID)
+                  const newCarModel = carModel
+                  newCarModel[idx].peminjaman = peminjamanList
+                  setcarModel(newCarModel)
 
-      // process continue
-      
+                  await mainRecords.push(newRecord)
+                  console.log("pushed to the new records:", newRecID)
+                  // setmainData([...mainData, res.data.peminjaman])
+                  console.log("mainrecords on update: ",mainRecords)
+                  setmainData(mainRecords)
+                  updateMainData()
+                })
+                .catch((err) => {
+                  console.log('delete failed',err)
+                  if(err?.response?.data?.login=== false) {
+                    window.location.reload()
+                  } else {
+                    console.log(err.response)
+                  }
+                })
+        } else if (!resetState) {
+            // add car model
+            const newCarID = res.data.carId
+            const idx = carModel.findIndex((car) => car._id=== newCarID)
+            const peminjamanList = res.data.newCarModel
+            const newCarModel = carModel
+            newCarModel[idx].peminjaman = peminjamanList
+            setcarModel(newCarModel)
 
-      // add car model
-      const newCarID = res.data.carId
-      const idx = carModel.findIndex((car) => car._id=== newCarID)
-      const peminjamanList = res.data.newCarModel
-      const newCarModel = carModel
-      newCarModel[idx].peminjaman = peminjamanList
-      setcarModel(newCarModel)
+            // add new approval
+            const newData = res.data.peminjaman
+            setmainData([...mainData, newData])
+        }
+        // retarded
+        // updateMainData()
 
-      // update main data
-      // get rid of deleted previous record
-      // add new record
-      if (resetState) {
-        const rejectedID = displayerContainer._id
-        // update history list
-        const hislist = historyList
-        const historyIDX = hislist.findIndex(list => list._id === rejectedID)
-        hislist.splice(historyIDX,1)
-        setHistoryList(hislist)
-
-        // update main data
-        const tobeDeleted = mainData.findIndex(del => del._id === rejectedID)
-        const main = mainData
-        main.push(res.data.peminjaman)
-        main.splice(tobeDeleted, 1)
-        setmainData(main)
-      } else {
-        // if its not reset method, update only the main data as part of normal flow
-        const newData = res.data.peminjaman
-        setmainData([...mainData, newData])
-      }
-      
-      // retarded
-      updateMainData()
-
-      setconfirmButton(1)
-      setconfirmLogo('ok')
-      setconfirmTitle('Success!')
-      setconfirmContent('data peminjaman baru telah ditambahkan')
-      loader(false)
-      setMainModal(false)
-      setInputModal(false)
-      setconfirmModal(true)
-      // set reset state back to false
-      setresetState(false)
+        setconfirmButton(1)
+        setconfirmLogo('ok')
+        setconfirmTitle('Success!')
+        setconfirmContent('data peminjaman baru telah ditambahkan')
+        loader(false)
+        setMainModal(false)
+        setInputModal(false)
+        setconfirmModal(true)
+        // set reset state back to false
+        setresetState(false)
+        })
+      .catch((err) => {
+        if (err.response)
+        console.log(err.response)
+        if (!err.response.login) {
+          window.location.reload()
+        }
+        console.log(`error on adding attempt :${err.response.message}`); 
+        setconfirmButton(1)
+        setconfirmLogo('err')
+        setconfirmTitle('Failed!')
+        setconfirmContent(`error :${err.message}`)
+        loader(false)
+        setInputModal(false)
+        setconfirmModal(true)
       })
-    .catch((err) => {
-      if (err.response)
-      console.log(err.response)
-      if (!err.response.login) {
-        window.location.reload()
-      }
-      console.log(`error on adding attempt :${err.response.message}`); 
-      setconfirmButton(1)
-      setconfirmLogo('err')
-      setconfirmTitle('Failed!')
-      setconfirmContent(`error :${err.message}`)
-      loader(false)
-      setInputModal(false)
-      setconfirmModal(true)
-    })
   loader(false)
   }
 
@@ -513,11 +529,12 @@ const navigate = useNavigate()
     axios.get(currentHost+'api/loadmore',{ params: { startingPoint: historyList.length } },{withCredentials : true})
       .then((res) => {
         console.log(res.data)
-        const updated = historyList.concat(res?.data?.mainData)
-        setHistoryList(updated)
+        const updated = mainData.concat(res?.data?.mainData)
+        setmainData(updated)
         setstartFrom((prev) => {
           return (prev + res?.data?.mainData?.length)
         })
+        updateMainData()
       })
       .catch((err) => {
         console.log('loadmore error: ',err.response)
@@ -561,7 +578,9 @@ const navigate = useNavigate()
         // update main list
         const idx = mainData.findIndex((dat) => dat._id === inputContainer._id)
         const newMainData = mainData
-        newMainData[idx].status = res.data.peminjaman.status
+        // replace data upon approval
+        // newMainData[idx].status = res.data.peminjaman.status
+        newMainData[idx] = res.data.peminjaman
         setmainData(newMainData)
 
         // update car model 
@@ -574,9 +593,9 @@ const navigate = useNavigate()
         updateMainData()
 
         if (typeof res.data.message === 'string' && res.data.message.length > 1) {
-          setconfirmContent(`record is approved : ${res.data.message}`, )
+          setconfirmContent(`Permohonan disetujui : ${res.data.message}`, )
         } else {
-          setconfirmContent('record is approved!')
+          setconfirmContent('Permohonan disetujui!')
         }
         setInputModal(false)
         loader(false)
@@ -646,21 +665,21 @@ const navigate = useNavigate()
         const currentidx = carModel.findIndex(car => car.plat === displayerContainer.plat)
         setcarStat(currentidx)
         setInputContainer(
-          {
-            jenis : carModel[carStat].jenis,
-            nost : displayerContainer.nost,
-            tglst : displayerContainer.tglst,
-            pengguna : displayerContainer.pengguna,
-            mulai : displayerContainer.mulai,
-            akhir : displayerContainer.akhir,
-            nond: displayerContainer.nond,
-            tglnd: displayerContainer.tglnd,
-            plat: carModel[carStat].plat, 
-            pic: displayerContainer?.nama || '', 
-            nip_pic: displayerContainer?.nip || '',
-            seksi:displayerContainer?.seksi || '',
-            status:'waiting' 
-          }
+            {
+              jenis : carModel[carStat].jenis,
+              nost : displayerContainer.nost,
+              tglst : displayerContainer.tglst,
+              pengguna : displayerContainer.pengguna,
+              mulai : displayerContainer.mulai,
+              akhir : displayerContainer.akhir,
+              nond: displayerContainer.nond,
+              tglnd: displayerContainer.tglnd,
+              plat: carModel[carStat].plat, 
+              pic: displayerContainer?.pic || '', 
+              nip_pic: displayerContainer?.nip_pic || '',
+              seksi:displayerContainer?.seksi || '',
+              status:'waiting' 
+            }
           )
           
         setEditStat(false)
@@ -670,7 +689,8 @@ const navigate = useNavigate()
 
   function download_xlsx() {
     // console.log('download xls file')
-    axios.get(currentHost+`xlsx`, {withCredentials : true, responseType:'blob'})
+    if (totalRec > 0) {
+      axios.get(currentHost+`xlsx`, {withCredentials : true, responseType:'blob'})
       .then(async(response) => {
         loader(true)
         // Create a Blob from the response data
@@ -702,6 +722,14 @@ const navigate = useNavigate()
         }
         loader(false)
       })
+    } else {
+      // no history available in database
+      setconfirmButton(1)
+      setconfirmLogo('err')
+      setconfirmTitle('Tidak ada data!')
+      setconfirmContent("tidak terdapat histori peminjaman apapun di database.")
+      setconfirmModal(true)
+    }
   }
 
   const [approvalSearch, setapprovalSearch] = useState('')
@@ -789,7 +817,11 @@ const navigate = useNavigate()
             setconfirmLogo('info')
             setconfirmTitle('Info Peminjaman')
             setconfirmState('')
-            setconfirmContent(<p>Peminjaman oleh {data.pic} ({data.seksi}) mulai hari {formatDate(data.mulai)[2]} s.d {formatDate(data.akhir)[2]} </p>)
+            setconfirmContent(<p>Peminjaman oleh {data.pic} ({data.seksi}) mulai hari {formatDate(data.mulai)[2]} s.d {formatDate(data.akhir)[2]} {
+              data.pengguna.length > 0 ? `dengan tujuan ${data.pengguna.map((x,idx) => {
+                return ` ${x}`
+              })}` : null
+            } </p>)
             setconfirmModal(true)
           } else {
             console.error("data doesn't exist!")
@@ -812,25 +844,77 @@ const navigate = useNavigate()
         })
     }
   }
+
+  function setAsDone () {
+    setconfirmButton(2)
+    setconfirmLogo('info')
+    setconfirmTitle('Tetapkan Selesai?')
+    setconfirmState('setDone')
+    setconfirmContent(<p>Tetapkan status menjadi "selesai"? </p>)
+    setconfirmModal(true)
+  }
+
+  function confirmSetAsDone () {
+    console.log('setting as done: '+ displayerContainer._id)
+
+    axios.patch(currentHost+`api/done/${displayerContainer._id}`,{withCredentials : true})
+     .then((res) => {
+       console.log(res.data)
+
+       // update main list
+       const idx = mainData.findIndex((dat) => dat._id === displayerContainer._id)
+       const newMainData = mainData
+       newMainData[idx].status = res.data.peminjaman.status
+       setmainData(newMainData)
+
+       // update car model 
+       const carIdx = carModel.findIndex((car) => car.plat === res.data.carModel_peminjaman.plat)
+       const newmodel = carModel
+       newmodel[carIdx] = res.data.carModel_peminjaman
+       setcarModel(newmodel)
+
+       // useEffect doesnt work bruh
+       updateMainData()
+
+       // display message
+       setInputModal(false)
+       setconfirmButton(1)
+       setconfirmLogo('ok')
+       setconfirmTitle('Success!')
+       setconfirmContent(`permohonan telah ditetapkan selesai!`)
+       setconfirmModal(true)
+     })
+     .catch((err) => {
+       console.log('set as done | error: ',err.response)
+       if (err?.response?.data?.message.includes("session")) {
+         window.location.reload()
+       } else {
+         setconfirmButton(1)
+         setconfirmLogo('err')
+         setconfirmTitle('Error!')
+         setconfirmContent(`gagal menetapkan data permohonan! ${err?.response?.data?.message}`)
+         setconfirmModal(true)
+       }
+     })
+  }
   
-
   useEffect(() => {
-    updateMainData()
-}, [mainData])
-
-
-
-  useEffect(() => {
-    setInputContainer({...inputContainer, plat: carModel[carStat].plat, jenis:carModel[carStat].jenis })
+    if (carModel.length > 0) {
+      setInputContainer({...inputContainer, plat: carModel[carStat].plat, jenis:carModel[carStat].jenis })
+    } else { }
   }, [carStat])
 
-  
+  useEffect(() => {
+    console.log("main data update triggered!")
+    updateMainData()
+}, [mainData, setmainData])
+
 
   return (
     <div className="app-container">
 
       {/* main modal */}
-          {mainModal ? <DisplayContainer resetRejected={resetRejected}/> : null}
+          {mainModal ? <DisplayContainer resetRejected={resetRejected} userstatus={user.role} setAsDone={() => setAsDone}/> : null}
       
 
 
@@ -859,9 +943,8 @@ const navigate = useNavigate()
                         <div className="car-overlay-left"></div>
                           <div className="car-overlay-right"></div>
                         <div className="car-list">
-
                              <div className="car-prev">
-                                <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) - 1)].plat}.png`} alt={'car.png'} />
+                                <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) - 1)]?.plat}.png`} alt={'car.png'} />
                                 {carModel[carIdx(carStat - 1)].jenis}
                               </div>
 
@@ -872,7 +955,7 @@ const navigate = useNavigate()
                               </div>
 
                               <div className="car-next">
-                                <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) + 1)].plat}.png`} alt={'car.png'} />
+                                <img src={`${currentHost}cars/${carModel[carIdx(carIdx(carStat) + 1)]?.plat}.png`} alt={'car.png'} />
                                 {carModel[carIdx(carStat + 1)].jenis}
                               </div> 
                         </div>
@@ -881,11 +964,12 @@ const navigate = useNavigate()
                      {editStat && user.role === 'user' ? null :
                       <div className="date-displayer">
                       <div className="date-bars-container">
-                        {next30dayz.map((dateobj,idx) => { 
-                              if (checkIfWithin(dateobj, carModel[carStat].peminjaman)[0]) {
+
+                        {next30dayz?.map((dateobj,idx) => { 
+                              if (checkIfWithin(dateobj, carModel[carStat]?.peminjaman)[0]) {
                                 return (
                                 <div key={idx+1} 
-                                onClick={() => displayBarContainer(checkIfWithin(dateobj, carModel[carStat].peminjaman)[1])}
+                                onClick={() => displayBarContainer(checkIfWithin(dateobj, carModel[carStat]?.peminjaman)[1])}
                                   className={"bar active"}>
                                     {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
                                     <div className="on-hover">
@@ -896,7 +980,7 @@ const navigate = useNavigate()
                               } else {
                                 return (
                                 <div key={idx+1} className={
-                                  (inputContainer.mulai=== normalizeDate(dateobj)) || (inputContainer.akhir=== normalizeDate(dateobj))? "bar selected" : (dateobj.getDay() === 0 || dateobj.getDay() === 6) ? "bar none" : "bar" 
+                                  (inputContainer.mulai=== normalizeDate(dateobj)) || (inputContainer.akhir === normalizeDate(dateobj))? "bar selected" : (dateobj.getDay() === 0 || dateobj.getDay() === 6) ? "bar none" : "bar" 
                                   } onClick={(dateobj.getDay() === 0 || dateobj.getDay() === 6) ? null : () => addtoSelection(dateobj,idx)}>
                                   {idx === 0 ? <span style={{position:'absolute',fontSize:'0.7rem', top:'-35px', left:'-7px', color:'white'}}>today</span> : null}
                                   <div className="on-hover-nonactive">
@@ -923,7 +1007,6 @@ const navigate = useNavigate()
                       </div> :
                       null
                       }
-
 
                       <div className="input-inner-container">
                           <div className="input-container-1">
@@ -1085,6 +1168,7 @@ const navigate = useNavigate()
                             confirmState === 'logout' ? logOut : 
                             confirmState === 'approve' ? confirmApprove : 
                             confirmState === 'reject' ? confirmReject :
+                            confirmState === 'setDone' ? confirmSetAsDone :
                             null
                           } 
                   logo={<MdOutlineDone />} 
@@ -1228,7 +1312,7 @@ const navigate = useNavigate()
                           Jenis
                         </div>
                         <div className="history-column-mulai">
-                          Tanggal
+                          Waktu
                         </div>
                         <div className="history-column-mulai">
                           Status
@@ -1270,7 +1354,7 @@ const navigate = useNavigate()
                             {app.jenis} ({plattery(app.plat)})
                           </div>
                           <div className="history-column-tanggal">
-                            {formatDate(app.mulai)[0]} s.d {formatDate(app.akhir)[0]}
+                            {formatDate(app.mulai)[1]} // {formatDate(app.akhir)[1]}
                           </div>
                           <div className={`history-column-status-${app.status}`}>
                             {app.status}

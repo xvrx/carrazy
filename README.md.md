@@ -40,7 +40,7 @@ npm start
 
 ![[bruh moment.gif]]
 
-8. add at least one admin or more users into Users collection based on this schema, there are only 2 roles : "admin" and "user"
+8. add at least one admin or more users into Users collection based on the following structure (contains nama,nip,seksi,pws,role), there are only 2 roles : "admin" and "user"
 
 ![[Pasted image 20230816194642.png]]
 
@@ -81,7 +81,7 @@ to add new car model :
 
 ![[Pasted image 20230816201715.png]]
 
-## run the server as a service (for windows only)
+## + run the server as a service (for windows only)
 
 after successful local server setup, you can install the process as a service (instead of showing up a terminal, the process run in the background) 
 
@@ -114,6 +114,9 @@ save the file
 ```bash
 node runAsService.js install
 ```
+- this will create a new folder inside your project directory called "daemon", check for any error in carrazy.err.log, if there's no error inside the log, the service is running in the background
+
+
 
 - open run (windows + R), type services.msc or just search for 'services' in windows start menu
 - in services, find for "carrazy" (name of service in step 2)
@@ -121,7 +124,10 @@ node runAsService.js install
 
 ![[Pasted image 20230816203953.png]]
 
-server will no longer show the terminal as it runs in the background. (you can still run the local server in the project folder using `npm start`)
+> server will no longer show the terminal as it runs in the background. 
+> you can still run the local server in the project folder using `npm start`
+
+open your browser and access the server as in step 11
 
 
 

@@ -1,31 +1,26 @@
 // express basic boilerplate
 const express = require('express')
 const app = express()
-const port = 2000
 const mongoose = require("mongoose");
-// const dotenv = require("dotenv");
 const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-// const fs = require("fs");
-const path = require("path");
+const fs = require("fs");
 const master = require('./models/Master')
-
-const { ifSliced, normalizeDate, checkIfDateSliced } = require('./util')
-
-// dotenv.config();
+const path = require('path')
+const { ifSliced } = require('./util')
+const {DB_URL, PORT, CRON_SCHEDULE, USE_BUILD_DIRECTORY, SERVER_ORIGIN_1} = require('./config')
+const dotenv = require('dotenv')
+dotenv.config();
 // turn off the annoying shit
 mongoose.set('strictQuery', false);
-
 // middleware for serving static files
 app.use("/cars", express.static(__dirname + '/cars'));
-
 
 // current date
 const now = new Date()
 // init cron
 const cron = require('node-cron');
-
 // Function to be executed every day at 7 AM from Monday to Friday
 const task = () => {
     // Your function logic here
@@ -39,7 +34,7 @@ const cronOpt = {
 }
   // Schedule the task using cron syntax (runs every day at 7 AM from Monday to Friday)
   // cron Options to define timeZone
-  cron.schedule('00 06 * * 1-5', task, cronOpt);
+  cron.schedule(CRON_SCHEDULE, task, cronOpt);
 
 
   // loop through undone record, adjust status with current date
@@ -75,6 +70,12 @@ const cronOpt = {
       master.findByIdAndUpdate(x._id, x,{new:true} ,(err, newCar) => {
         if (err) {
         console.log(`failed to update record : ${x._id}`);
+        // log error
+       fs.appendFile('errlog.txt', `failed to update record : ${x._id}`, (err) => {
+          if (err) {
+              console.error('Error writing to log file:', err);
+        }}) 
+  
         } else {
             console.log('updated main record :', x._id, "status to: ", x?.status)
     }})
@@ -96,10 +97,14 @@ const cronOpt = {
         console.log(`carmodel.peminjaman removed : ${idc}`)
       } catch (error) {
         console.log(`failed to remove car model for: ${x.id.toString()}`,error)
+        fs.appendFile('errlog.txt', `failed to remove car model for: ${x.id.toString()}, ${error.toString()}`, (err) => {
+          if (err) {
+              console.error('Error writing to log file:', err);
+        }})
       }
     }
 
-    console.log('peminjaman data is updated, please take notice of any error')
+    console.log('peminjaman data is updated, please take notice of any error in errlog.txt')
   }
 
   
@@ -112,9 +117,9 @@ app.use(
   cors({
     // origin: "http://10.29.63.250:3000",
     origin: [
-      // "*"
-      "http://localhost:3000",
-      "http://10.29.63.250:3000",
+      "*",
+      // SERVER_ORIGIN_1,
+    //   // process.env.ORIGIN_2,
     ],
     // origin: "http://10.13.1.63:3000",
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
@@ -131,7 +136,7 @@ app.use(
 
   const sessionStore = new MongoStore({
     // use existing mongoDB connection
-    mongoUrl: "mongodb://127.0.0.1:27017/carrazy",
+    mongoUrl: DB_URL,
     collection: "sessions",
   });
 
@@ -185,36 +190,34 @@ app.use("/auth", auth);
 app.use("/xlsx", xlsx);
 // app.use("/xlsx", xlsx);
 
+// Serve static files from the build directory
+app.use(express.static(path.join(__dirname, 'build')));
 
 
+// SERVE REACT WITH EXPRESS (optional)
+// COPY REACT BUILD FOLDER INTO THIS DIRECTORY - Serve the index.html file for all other requests
 
-async function connectDB(MONGO_URL,db_options) {
-  try {
-    await mongoose.connect(MONGO_URL, db_options);
-  } catch (error) {
-    console.log(error);
-  }
+if (USE_BUILD_DIRECTORY) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
 }
 
 
-// try {
-
-
-
 mongoose
-  .connect("mongodb://127.0.0.1:27017/carrazy", {
+  .connect(DB_URL, {
     // disable following option to prevent error upon db connection failure
     serverSelectionTimeoutMS: 3000,
   })
   .then(() => {
     console.log("carrazy is connected to the database!");
-    app.listen(2000, () => console.log(`carrazy is on https://localhost:${port}`));
+    app.listen(2000, () => console.log(`carrazy is on https://localhost:${PORT}`));
+    // app.listen(2000, () => console.log(`carrazy is on https://localhost:${parseInt(process.env.EXPRESS_PORT)}`));
   })
   .catch((err) => {
     console.error("Error connecting to the database:", err);
-    app.listen(2000, () => console.log(`carrazy is on https://localhost:${port}`));
+    app.listen(2000, () => console.log(`carrazy is on https://localhost:${PORT}`));
+    // app.listen(2000, () => console.log(`carrazy is on https://localhost:${parseInt(process.env.EXPRESS_PORT)}`));
   });
 
-// Your routes and middleware setup should go here
-// Example: app.use("/api", apiRouter);
 

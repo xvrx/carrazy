@@ -8,8 +8,17 @@ import { ModalProvider } from './context/Modal'
 import { UtilsProvider } from './context/Utils'
 import { APIProvider } from './context/API'
 
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {}
+  console.error = () => {}
+  console.debug = () => {}
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// replace console.* for disable log on production
+
+
+
 root.render(
   <React.StrictMode>
     <UtilsProvider>

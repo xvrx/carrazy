@@ -2,9 +2,10 @@ import React,{ useContext } from 'react'
 import { ModalContext } from '../context/Modal'
 import { UtilsContext } from '../context/Utils'
 import { ApiContext } from '../context/API'
-import {MdOutlineCloseFullscreen,MdOutlineHistory} from "react-icons/md";
+import {MdOutlineCloseFullscreen,MdOutlineHistory, MdFileDownloadDone} from "react-icons/md";
+import { ButtonOne, ButtonTwo } from './Button';
 
-const DisplayContainer = ({resetRejected}) => {
+const DisplayContainer = ({resetRejected, userstatus, setAsDone}) => {
 
     const { setMainModal,emptyContainer,
         mainModalTitle, setdisplayerContainer,
@@ -53,6 +54,12 @@ const DisplayContainer = ({resetRejected}) => {
                     <div className="main-modal-row-label">Nomor Peminjaman</div>
                     <div className="main-modal-row-list">{`${displayerContainer.nond} tanggal ${formatDate(displayerContainer.tglnd)[1]}`}</div>
                   </div>
+                  {
+                    (userstatus === "admin" && (displayerContainer.status === 'approved' || displayerContainer.status === 'ongoing')) ?
+                      <div className="button-approve" style={{marginTop:"50px"}}>
+                      <ButtonTwo logo={<MdFileDownloadDone size={50}/>} title="Selesai" onClick={setAsDone()}/>
+                    </div> : null
+                  }
                 </div>
               </div>
             </div>
