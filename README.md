@@ -37,7 +37,7 @@ npm start
 
 7. import *carModelExample.json*  to the carModel Collection
 
-![figure](./images/bruh moment.gif)
+![figure](./images/bruh%20moment.gif)
 
 8. add at least one admin or more users into Users collection based on the following structure (contains nama,nip,seksi,pws,role), there are only 2 roles : "admin" and "user"
 
