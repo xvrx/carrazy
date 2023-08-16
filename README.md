@@ -25,7 +25,7 @@ npm install
 
 3. open mongodb, create a database 'carrazy'
 
-5. navigate to project directory and run :
+5. in cmd, navigate to project directory and run :
 ```bash
 npm start
 ```
