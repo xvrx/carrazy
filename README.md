@@ -17,7 +17,7 @@ requirements :
 
 ## run server locally
 
-1. download the compressed project file and *carModelExample.json* from [releases](https://github.com/xvrx/carrazy/releases/tag/%23fleet) 
+1. download and extract the compressed project file and *carModelExample.json* from [releases](https://github.com/xvrx/carrazy/releases/tag/%23fleet) 
 2. using command prompt, navigate to folder the directory and install all necessary modules (example :  `cd D:\folders\<projectdirectory>`)
 ```bash
 npm install
